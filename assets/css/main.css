@@ -1,2 +1,7 @@
 @import "tailwindcss";
 @import "@nuxt/ui-pro";
+@theme static {
+  --font-sans: 'Manrope', sans-serif;
+  --font-serif: 'Gambarino', serif;
+  --color-white: lch(93.72% 2.07 100.08);
+}
