@@ -3,5 +3,5 @@
 @theme static {
   --font-sans: 'Manrope', sans-serif;
   --font-serif: 'Gambarino', serif;
-  --color-white: lch(93.72% 2.07 100.08);
+  --color-white: oklch(0.95 0 0);
 }

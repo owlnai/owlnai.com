@@ -20,7 +20,7 @@ I got my start editing wikis, driven by endless curiosity and a sharp eye for de
     <UButton variant="soft" to="https://github.com/owlnai" icon="mingcute:github-line" color="neutral">GitHub</UButton>
     <UButton variant="soft" to="https://bsky.app/profile/owlnai.com" icon="mingcute:bluesky-social-line" color="info">Bluesky</UButton>
     </nav>
-    <div class="flex gap-4 my-4 hidden">
+    <div class="flex gap-4 my-4">
       <span
         class="border py-4 px-4 rounded-full inline-flex flex-col items-center"
       >
