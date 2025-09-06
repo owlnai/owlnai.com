@@ -4,7 +4,21 @@ export default defineNuxtConfig({
   css: [
     '~/assets/css/main.css',
   ],
-  modules: ['@nuxthub/core', '@nuxt/content', '@unocss/nuxt', '@nuxtjs/color-mode'],
+    site: {
+    url: 'https://owlnai.com',
+    name: 'Owlnai',
+    description: 'Developer, writer, and open source enthusiast.',
+    defaultLocale: 'en', // not needed if you have @nuxtjs/i18n installed
+  },
+  modules: [
+    '@nuxthub/core',
+    '@nuxt/content',
+    '@nuxtjs/color-mode',
+    '@unocss/nuxt',
+    '@nuxt/fonts',
+    '@nuxtjs/seo',
+    '@nuxt/image',
+  ],
   colorMode: {
     classSuffix: '',
     preference: 'system',
@@ -14,5 +28,8 @@ export default defineNuxtConfig({
     experimental: {
       openAPI: true
     }
+  },
+    app: {
+    pageTransition: { name: 'page', mode: 'out-in' }
   }
 })
