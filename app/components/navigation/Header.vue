@@ -10,7 +10,7 @@ router.getRoutes().sort((a, b) => a.path.localeCompare(b.path)).forEach((route) 
 </script>
 <template>
     <header>
-        <div class="max-w-2xl mx-auto py-4 mt-32 mb-4 text-white">
+        <div class="max-w-2xl mx-auto py-4 mt-32 mb-4 text-black dark:text-white">
             <nav class="flex flex-col-reverse sm:flex-row sm:items-end justify-between">
                 <h1 class="text-4xl font-bold">
                     {{  route.meta.header }}
