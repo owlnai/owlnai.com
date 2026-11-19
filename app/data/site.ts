@@ -2,8 +2,6 @@ export const person = {
   name: 'Unai Mengual',
   handle: 'owlnai',
   location: 'Spain',
-  timeZone: 'Europe/Madrid',
-  languages: ['ENG', 'ESP'],
 }
 
 export interface Brand {
@@ -27,37 +25,48 @@ export const brands = {
   },
 } satisfies Record<string, Brand>
 
-export interface NowItem {
-  lead: string
-  name: string
+// The same three, described for the About page
+export const names = [
+  {
+    ...brands.owlnai,
+    href: 'https://github.com/owlnai',
+    description: 'My own name online: open source, writing and workshops.',
+  },
+  { ...brands.sector9, description: 'My web design studio.' },
+  { ...brands.songbird, description: 'Roblox tools that empower creators.' },
+]
+
+export interface CommunityItem {
+  title: string
+  description: string
   href?: string
-  tail: string
 }
 
-export const now: NowItem[] = [
+export const community: CommunityItem[] = [
   {
-    lead: 'Tech lead at',
-    name: 'MRM Spain',
-    tail: ', building for some of the world’s most recognisable brands.',
+    title: 'isnuxt3ready',
+    description:
+      'A community-built compatibility guide for Nuxt 3 modules that helped developers track ecosystem readiness.',
+    href: 'https://github.com/owlnai/isnuxt3ready',
   },
   {
-    lead: 'Running',
-    name: 'sector9',
-    href: 'https://section9.studio',
-    tail: ', my web design studio.',
+    title: 'Workshops',
+    description: 'Nuxt, UnoCSS and accessibility workshops, with popular Spanish developer Twitch streamers.',
+    href: 'https://github.com/slidevjs/docs-es',
   },
   {
-    lead: 'Building',
-    name: 'Songbird Labs',
-    href: 'https://github.com/songbirdlabs',
-    tail: ', Roblox tools that empower creators.',
+    title: 'Mentoring',
+    description:
+      'Mentoring aspiring developers and contributing across the Vue.js ecosystem, with a focus on developer experience.',
   },
-  {
-    lead: 'Back in open source after some time away, starting with',
-    name: 'rex-git',
-    href: 'https://github.com/owlnai/rex-git',
-    tail: '.',
-  },
+]
+
+export const facts = [
+  { label: 'Based in', value: 'Spain' },
+  { label: 'Role', value: 'Tech lead at MRM' },
+  { label: 'Studio', value: 'sector9' },
+  { label: 'Building', value: 'Songbird Labs' },
+  { label: 'Speaks', value: 'English, Spanish' },
 ]
 
 export interface WorkItem {
@@ -70,6 +79,13 @@ export interface WorkItem {
 }
 
 export const work: WorkItem[] = [
+  {
+    id: 'mrm',
+    name: 'MRM',
+    year: 'Now',
+    description: 'Tech lead, building for some of the world’s most recognizable brands.',
+    href: 'https://www.mrm.com',
+  },
   {
     id: 'sector9',
     name: 'sector9',
@@ -111,54 +127,33 @@ export const work: WorkItem[] = [
   },
 ]
 
+// Projects by other people that I have sent patches to. Kept small on purpose.
 export interface Contribution {
   id: string
   name: string
   avatar: string
-  summary: string
-  detail: string
   href: string
 }
 
 export const contributions: Contribution[] = [
-  {
-    id: 'nuxt',
-    name: 'nuxt/nuxt',
-    avatar: 'https://github.com/nuxt.png?size=96',
-    summary: 'The full-stack Vue framework',
-    detail: 'Contributions to the framework I reach for first, and have built around since Nuxt 2.',
-    href: 'https://github.com/nuxt/nuxt',
-  },
+  { id: 'nuxt', name: 'Nuxt', avatar: 'https://github.com/nuxt.png?size=96', href: 'https://github.com/nuxt/nuxt' },
   {
     id: 'slidev',
-    name: 'slidevjs/docs-es',
+    name: 'Slidev docs (Spanish)',
     avatar: 'https://github.com/slidevjs.png?size=96',
-    summary: 'Slidev docs, in Spanish',
-    detail: 'The Spanish translation of the Slidev documentation, used in workshops with Spanish-speaking streamers.',
     href: 'https://github.com/slidevjs/docs-es',
   },
   {
     id: 'wikioasis',
     name: 'WikiOasis',
     avatar: 'https://github.com/WikiOasis.png?size=96',
-    summary: 'A space for anybody to write about anything',
-    detail: 'MediaWiki configuration and the landing page for a wiki farm. Wikis are where I started.',
     href: 'https://github.com/WikiOasis',
   },
-  {
-    id: 'afordin',
-    name: 'Afordin',
-    avatar: 'https://github.com/Afordin.png?size=96',
-    summary: 'A Spanish-speaking programming community',
-    detail: 'Open source projects built together with a Spanish-speaking developer community.',
-    href: 'https://github.com/Afordin',
-  },
+  { id: 'afordin', name: 'Afordin', avatar: 'https://github.com/Afordin.png?size=96', href: 'https://github.com/Afordin' },
   {
     id: 'taekwondo',
-    name: 'Tekwondo-RAM/taekwondo-app',
+    name: 'taekwondo-app',
     avatar: 'https://github.com/Tekwondo-RAM.png?size=96',
-    summary: 'A taekwondo PWA',
-    detail: 'Contributions to a progressive web app for taekwondo practitioners.',
     href: 'https://github.com/Tekwondo-RAM/taekwondo-app',
   },
 ]
@@ -227,43 +222,5 @@ export const milestones: Milestone[] = [
     year: 'Before',
     title: 'Wikis and Notepad',
     description: 'Editing wikis as a teenager, and building simple websites in HTML with Notepad.',
-  },
-]
-
-export interface UsesGroup {
-  category: string
-  items: { name: string; description: string }[]
-}
-
-export const uses: UsesGroup[] = [
-  {
-    category: 'Development',
-    items: [
-      { name: 'VS Code', description: 'Primary code editor, but slowly moving to Zed.' },
-      { name: 'Ghostty', description: 'AMAZING terminal! And without AI shoved-in.' },
-      { name: 'GitHub', description: 'Version control and collaboration.' },
-      { name: 'Hetzner + Coolify', description: 'Taught me a lot about hosting, and it’s cooler right?' },
-      { name: 'Figma', description: 'Design, prototyping, and some graphic work.' },
-      { name: 'Eagle', description: 'Image and asset management tool.' },
-    ],
-  },
-  {
-    category: 'Productivity',
-    items: [
-      { name: 'Obsidian', description: 'Knowledge management and note-taking. A second brain.' },
-      { name: 'Journal App', description: 'It already knows what I did during the day :-)' },
-      { name: 'Raycast', description: 'Launcher and productivity shortcuts.' },
-      { name: 'mynoise.net', description: 'Sounds for concentration and relaxation.' },
-    ],
-  },
-  {
-    category: 'Hardware',
-    items: [
-      { name: 'MacBook Pro M2', description: '16-inch, primary development machine.' },
-      { name: 'iPad Pro M4', description: 'Design prototypes, second monitor and video editing.' },
-      { name: 'Insta360 Link', description: 'The best webcam ever made for most of us.' },
-      { name: 'Studio Display', description: '27-inch display for design work.' },
-      { name: 'Elgato Wave:3', description: 'USB microphone for high-quality audio.' },
-    ],
   },
 ]

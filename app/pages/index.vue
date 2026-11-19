@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { brands, contributions, now, person, socials, work } from '~/data/site'
+import { contributions, person, socials, work } from '~/data/site'
 
 const { data: headline } = await useAsyncData('headline', () => queryCollection('content').path('/headline').first())
 const { data: posts } = await useAsyncData('home-posts', () =>
@@ -24,25 +24,11 @@ useSeoMeta({
   <div>
     <section class="hero">
       <div class="hero__text">
-        <p class="hero__statement">
-          I build for the web as
-          <NuxtLink :to="brands.owlnai.href" class="chip"
-            ><img :src="brands.owlnai.logo" alt="" class="chip__logo chip__logo--round" />{{ brands.owlnai.name }}</NuxtLink
-          >, design it at
-          <a :href="brands.sector9.href" class="chip"
-            ><img :src="brands.sector9.logo" alt="" class="chip__logo" />{{ brands.sector9.name }}</a
-          >, and make Roblox tools that empower creators at
-          <a :href="brands.songbird.href" class="chip"
-            ><img :src="brands.songbird.logo" alt="" class="chip__logo" />{{ brands.songbird.name }}</a
-          >.
-        </p>
-        <div>
-          <h1 class="hero__name display">{{ person.name }}</h1>
-          <p class="hero__facts mono">
-            <span><span class="hero__dot" aria-hidden="true" /><LocalTime :time-zone="person.timeZone" /> in {{ person.location }}</span>
-            <span>{{ person.languages.join(' / ') }}</span>
-          </p>
+        <div class="hero__statement">
+          <ContentRenderer v-if="headline" :value="headline" />
+          <p class="hero__more"><NuxtLink to="/about" class="link">More about me</NuxtLink></p>
         </div>
+        <h1 class="hero__name display">{{ person.name }}</h1>
       </div>
       <figure class="hero__portrait">
         <span class="cross" data-at="tl" />
@@ -51,25 +37,7 @@ useSeoMeta({
       </figure>
     </section>
 
-    <SectionBlock id="about" title="About">
-      <template #aside>
-        <NuxtLink to="/about" class="link">More about me</NuxtLink>
-      </template>
-      <ContentRenderer v-if="headline" :value="headline" class="lede" />
-    </SectionBlock>
-
     <LatelyRow />
-
-    <SectionBlock id="now" title="Now">
-      <ul class="now">
-        <li v-for="item in now" :key="item.name" class="now__item">
-          {{ item.lead }}
-          <a v-if="item.href" :href="item.href" class="now__name link">{{ item.name }}</a
-          ><strong v-else class="now__name">{{ item.name }}</strong
-          >{{ item.tail }}
-        </li>
-      </ul>
-    </SectionBlock>
 
     <SectionBlock id="work" title="Work">
       <ul class="rows">
@@ -90,21 +58,18 @@ useSeoMeta({
       </ul>
     </SectionBlock>
 
-    <SectionBlock id="open-source" title="Open source">
-      <ul class="orgs">
-        <li v-for="item in contributions" :key="item.id" class="orgs__item">
-          <HoverCard>
-            <HoverCardTrigger :href="item.href" class="orgs__link">
-              <img :src="item.avatar" alt="" width="28" height="28" loading="lazy" class="orgs__avatar" />
-              <span class="orgs__name">{{ item.name }}</span>
-              <span class="orgs__summary">{{ item.summary }}</span>
-            </HoverCardTrigger>
-            <HoverCardContent side="top" align="start" :side-offset="8">
-              <p class="orgs__card-body">{{ item.detail }}</p>
-            </HoverCardContent>
-          </HoverCard>
-        </li>
-      </ul>
+    <SectionBlock id="contributions" title="Contributions">
+      <p class="contrib">
+        Patches, translations and fixes for projects I use:
+        <template v-for="(item, i) in contributions" :key="item.id">
+          <a :href="item.href" class="contrib__link"
+            ><img :src="item.avatar" alt="" width="20" height="20" loading="lazy" class="contrib__logo" />{{
+              item.name
+            }}</a
+          ><template v-if="i < contributions.length - 2">, </template
+          ><template v-else-if="i === contributions.length - 2"> and </template>
+        </template>.
+      </p>
     </SectionBlock>
 
     <SectionBlock v-if="posts?.length" id="writing" title="Writing">
@@ -176,43 +141,19 @@ useSeoMeta({
 }
 
 .hero__statement {
-  max-width: 31rem;
+  max-width: 33rem;
   color: var(--ink-soft);
-  font-size: clamp(1.125rem, 1.9vw, 1.5rem);
+  font-size: clamp(1.125rem, 1.7vw, 1.375rem);
   font-weight: 450;
   letter-spacing: -0.02em;
   line-height: 1.4;
   text-wrap: pretty;
 }
 
-.chip {
+.hero__more {
+  margin-top: 1rem;
   color: var(--ink);
-  font-weight: 600;
-  white-space: nowrap;
-  text-decoration: underline;
-  text-decoration-color: var(--line-strong);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.2em;
-  transition: text-decoration-color 0.2s;
-}
-
-.chip:hover {
-  text-decoration-color: currentColor;
-}
-
-.chip__logo {
-  display: inline-block;
-  width: 1.15em;
-  height: 1.15em;
-  margin-inline-end: 0.3em;
-  border-radius: 0.25em;
-  box-shadow: 0 0 0 1px var(--line-strong);
-  object-fit: cover;
-  vertical-align: -0.22em;
-}
-
-.chip__logo--round {
-  border-radius: 50%;
+  font-size: 1rem;
 }
 
 .hero__name {
@@ -221,37 +162,14 @@ useSeoMeta({
   line-height: 0.86;
 }
 
-.hero__facts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem 1.5rem;
-  margin-top: 1.5rem;
-  color: var(--ink-faint);
-}
-
-.hero__dot {
-  display: inline-block;
-  width: 0.4rem;
-  height: 0.4rem;
-  margin-inline-end: 0.5rem;
-  border-radius: 50%;
-  background: var(--accent);
-  vertical-align: 0.08em;
-}
-
 @media (prefers-reduced-motion: no-preference) {
   .hero__statement,
-  .hero__name,
-  .hero__facts {
+  .hero__name {
     animation: rise 0.8s var(--ease-out) both;
   }
 
   .hero__name {
     animation-delay: 80ms;
-  }
-
-  .hero__facts {
-    animation-delay: 160ms;
   }
 
   @keyframes rise {
@@ -280,29 +198,38 @@ useSeoMeta({
   filter: none;
 }
 
-.lede {
-  max-width: 46rem;
-  padding: 2rem var(--gutter) 2.25rem;
-  font-size: clamp(1.25rem, 2.2vw, 1.625rem);
-  line-height: 1.35;
-  letter-spacing: -0.02em;
-  text-wrap: pretty;
-}
-
-.now__item {
-  padding: 1.1rem var(--gutter);
+.contrib {
+  max-width: 44rem;
+  padding: 1.5rem var(--gutter) 1.7rem;
   color: var(--ink-soft);
   font-size: 1.0625rem;
+  line-height: 1.7;
   text-wrap: pretty;
 }
 
-.now__item + .now__item {
-  border-top: 1px solid var(--line);
-}
-
-.now__name {
+.contrib__link {
   color: var(--ink);
   font-weight: 550;
+  white-space: nowrap;
+  text-decoration: underline;
+  text-decoration-color: var(--line-strong);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  transition: text-decoration-color 0.2s;
+}
+
+.contrib__link:hover {
+  text-decoration-color: currentColor;
+}
+
+.contrib__logo {
+  display: inline-block;
+  width: 1.15em;
+  height: 1.15em;
+  margin-inline-end: 0.35em;
+  border-radius: 0.25em;
+  box-shadow: 0 0 0 1px var(--line-strong);
+  vertical-align: -0.2em;
 }
 
 .rows > li + li {
@@ -384,62 +311,16 @@ useSeoMeta({
   translate: 2px -2px;
 }
 
-.orgs,
 .cards {
   display: grid;
   overflow: clip;
 }
 
-.orgs {
-  grid-template-columns: repeat(auto-fill, minmax(16.5rem, 1fr));
-}
-
-.orgs > li,
 .cards > li {
   min-width: 0;
   margin: 0 -1px -1px 0;
   border-inline-end: 1px solid var(--line);
   border-block-end: 1px solid var(--line);
-}
-
-.orgs__link {
-  display: grid;
-  grid-template-columns: 1.75rem minmax(0, 1fr);
-  gap: 0.1rem 0.75rem;
-  align-items: center;
-  height: 100%;
-  padding: 1.1rem var(--gutter);
-  transition: background-color 0.2s;
-}
-
-.orgs__link:hover,
-.orgs__link[data-open] {
-  background: var(--sunken);
-}
-
-.orgs__avatar {
-  grid-row: span 2;
-  width: 1.75rem;
-  height: 1.75rem;
-  border-radius: 4px;
-  border: 1px solid var(--line);
-  background: var(--raised);
-}
-
-.orgs__name {
-  font-weight: 550;
-  overflow-wrap: anywhere;
-}
-
-.orgs__summary {
-  grid-column: 2;
-  color: var(--ink-faint);
-  font-size: 0.875rem;
-}
-
-.orgs__card-body {
-  font-size: 0.9375rem;
-  line-height: 1.5;
 }
 
 .cards--places,

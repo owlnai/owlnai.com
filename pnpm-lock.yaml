@@ -32,6 +32,9 @@ importers:
       circle-flags:
         specifier: ^2.8.3
         version: 2.8.3
+      simple-icons:
+        specifier: ^16.38.0
+        version: 16.38.0
       vue:
         specifier: ^3.5.21
         version: 3.5.21(typescript@5.8.3)
@@ -4977,6 +4980,10 @@ packages:
 
   simple-git@3.28.0:
     resolution: {integrity: sha512-Rs/vQRwsn1ILH1oBUy8NucJlXmnnLeLCfcvbSehkPzbv3wwoFWIdtfd6Ndo6ZPhlPsCZ60CPI4rxurnwAa+a2w==}
+
+  simple-icons@16.38.0:
+    resolution: {integrity: sha512-B0Wws90eL0Fm65aH35CA8kM+7/Zzgsaytt0DndBx7VFm3+o9HurVIVRQZ1hvqqYYIyNJq7ycn3kQm2v2FhiWSQ==}
+    engines: {node: '>=0.12.18'}
 
   simple-swizzle@0.2.2:
     resolution: {integrity: sha512-JA//kQgZtbuY83m+xT+tXJkmJncGMTFT+C+g2h2R9uxkYIrE2yy9sgmcLhCnw57/WSD+Eh3J97FPEDFnbXnDUg==}
@@ -11871,6 +11878,8 @@ snapshots:
       debug: 4.4.1
     transitivePeerDependencies:
       - supports-color
+
+  simple-icons@16.38.0: {}
 
   simple-swizzle@0.2.2:
     dependencies:

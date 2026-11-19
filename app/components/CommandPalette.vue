@@ -22,9 +22,7 @@ const groups: { label: string; items: PaletteCommand[] }[] = [
       { value: 'places', label: 'Places', hint: '/places', keywords: ['travel', 'trips', 'photos'], run: () => router.push('/places') },
       { value: 'notes', label: 'Notes', hint: '/notes', keywords: ['snippets', 'quotes', 'code'], run: () => router.push('/notes') },
       { value: 'uses', label: 'Uses', hint: '/uses', keywords: ['setup', 'tools', 'gear'], run: () => router.push('/uses') },
-      { value: 'now', label: 'Now', hint: '/#now', run: () => router.push('/#now') },
-      { value: 'work', label: 'Work', hint: '/#work', keywords: ['projects', 'sector9', 'songbird'], run: () => router.push('/#work') },
-      { value: 'open-source', label: 'Open source', hint: '/#open-source', run: () => router.push('/#open-source') },
+      { value: 'work', label: 'Work', hint: '/#work', keywords: ['projects', 'mrm', 'sector9', 'songbird'], run: () => router.push('/#work') },
       { value: 'rss', label: 'RSS feed', hint: '/rss.xml', keywords: ['subscribe'], run: () => window.open('/rss.xml', '_blank', 'noopener') },
     ],
   },
@@ -57,7 +55,7 @@ function onAction(value: string) {
 
 <template>
   <Dialog v-model:open="open">
-    <DialogTrigger shortcut="mod+k" class="trigger">
+    <DialogTrigger shortcut="mod+k" class="trigger glass">
       <svg class="trigger__icon" viewBox="0 0 16 16" aria-hidden="true">
         <circle cx="7" cy="7" r="4.5" />
         <path d="m10.5 10.5 3 3" />
@@ -104,22 +102,22 @@ function onAction(value: string) {
 .trigger {
   display: inline-flex;
   align-items: center;
+  justify-self: end;
   gap: 0.5rem;
-  height: 2rem;
-  padding: 0 0.6rem;
-  border: 1px solid var(--line-strong);
-  background: var(--raised);
-  color: var(--ink-faint);
-  font-size: 0.8125rem;
+  height: 2.5rem;
+  padding: 0 0.95rem;
+  border-radius: 999px;
+  color: var(--ink-soft);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
   cursor: default;
-  transition:
-    color 0.2s,
-    border-color 0.2s;
+  pointer-events: auto;
+  transition: color 0.2s;
 }
 
 .trigger:hover {
   color: var(--ink);
-  border-color: var(--mark);
 }
 
 .trigger__icon {
@@ -133,9 +131,7 @@ function onAction(value: string) {
 }
 
 .trigger__keys {
-  font-family: var(--font-mono);
-  font-size: 0.6875rem;
-  letter-spacing: 0.04em;
+  font-size: 0.75rem;
   color: var(--ink-faint);
 }
 
@@ -146,7 +142,7 @@ function onAction(value: string) {
   }
 
   .trigger {
-    width: 2rem;
+    width: 2.5rem;
     justify-content: center;
     padding: 0;
   }
