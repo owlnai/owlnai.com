@@ -24,9 +24,10 @@ const year = new Date().getFullYear()
 }
 
 .footer__sign {
-  font-size: clamp(3rem, 11vw, 7rem);
+  font-size: clamp(2.75rem, 9.5vw, 6rem);
   font-style: italic;
-  font-weight: 480;
+  font-weight: 500;
+  letter-spacing: -0.06em;
   color: var(--ink);
 }
 

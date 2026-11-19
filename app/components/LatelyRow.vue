@@ -95,19 +95,16 @@ a.lately__cell:hover {
 }
 
 .lately__main {
-  font-size: clamp(1.75rem, 3.4vw, 2.5rem);
-  font-weight: 540;
-  font-stretch: 76%;
-  letter-spacing: -0.025em;
-  line-height: 1.05;
+  font-size: clamp(1.5rem, 2.8vw, 2.125rem);
+  letter-spacing: -0.04em;
+  line-height: 1.08;
   overflow-wrap: anywhere;
 }
 
 .lately__main--quote {
-  font-size: 1.375rem;
-  font-stretch: 82%;
-  font-weight: 440;
-  letter-spacing: -0.012em;
-  line-height: 1.2;
+  font-size: 1.125rem;
+  font-weight: 450;
+  letter-spacing: -0.015em;
+  line-height: 1.3;
 }
 </style>

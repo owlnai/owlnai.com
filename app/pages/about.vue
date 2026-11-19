@@ -117,11 +117,9 @@ useSeoMeta({
 .timeline__title {
   grid-column: 3;
   grid-row: 1;
-  font-size: 1.625rem;
-  font-weight: 540;
-  font-stretch: 76%;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
+  font-size: 1.375rem;
+  letter-spacing: -0.03em;
+  line-height: 1.3;
 }
 
 .timeline__desc {

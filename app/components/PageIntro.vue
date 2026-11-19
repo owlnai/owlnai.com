@@ -16,7 +16,8 @@ defineProps<{ title: string }>()
 
 .page-intro__title {
   max-width: 14ch;
-  font-size: clamp(2.75rem, 8.5vw, 5.75rem);
+  font-size: clamp(2.5rem, 7vw, 4.75rem);
+  letter-spacing: -0.055em;
   text-wrap: balance;
 }
 </style>

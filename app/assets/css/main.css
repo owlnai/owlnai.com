@@ -33,7 +33,6 @@
   --accent-wash: light-dark(#e3f3ea, #10251a);
   --shadow: light-dark(rgb(0 0 0 / 0.08), rgb(0 0 0 / 0.5));
 
-  --font-display: 'Noto Serif Display Variable', 'Iowan Old Style', 'Times New Roman', serif;
   --font-sans: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'Geist Mono Variable', ui-monospace, 'SF Mono', Menlo, monospace;
 
@@ -63,6 +62,13 @@ html {
 @media (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;
+  }
+}
+
+/* The header wraps to two rows on narrow screens */
+@media (max-width: 44rem) {
+  html {
+    scroll-padding-top: 7rem;
   }
 }
 
@@ -114,11 +120,9 @@ button {
 }
 
 .display {
-  font-family: var(--font-display);
-  font-stretch: 70%;
-  font-weight: 560;
-  letter-spacing: -0.035em;
-  line-height: 1;
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
 }
 
 .mono {
@@ -241,12 +245,10 @@ button {
 .prose h2 {
   margin-top: 2.5em;
   color: var(--ink);
-  font-family: var(--font-display);
-  font-stretch: 75%;
-  font-weight: 540;
-  font-size: 1.75rem;
-  letter-spacing: -0.02em;
-  line-height: 1.15;
+  font-weight: 600;
+  font-size: 1.5rem;
+  letter-spacing: -0.035em;
+  line-height: 1.2;
 }
 
 .prose h2 a {
@@ -330,8 +332,28 @@ button {
 }
 
 /* Syntax colours follow the page's colour scheme instead of a .dark class */
-.prose .shiki span {
+:root .shiki span {
   color: light-dark(var(--shiki-default), var(--shiki-dark));
+}
+
+/* Photos in a place post run wider than the text column */
+.prose--photos {
+  max-width: none;
+}
+
+.prose--photos > :not(p:has(img), figure) {
+  max-width: 38rem;
+}
+
+.prose img {
+  width: 100%;
+  height: auto;
+}
+
+.prose--photos p:has(img) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
+  gap: 0.75rem;
 }
 
 .prose hr {

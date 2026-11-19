@@ -1,57 +1,62 @@
 <script setup lang="ts">
-import { places } from '~/data/places'
-import type { WorkKind } from '~/data/site'
-import { contributions, now, person, socials, work } from '~/data/site'
+import { brands, contributions, now, person, socials, work } from '~/data/site'
 
 const { data: headline } = await useAsyncData('headline', () => queryCollection('content').path('/headline').first())
 const { data: posts } = await useAsyncData('home-posts', () =>
   queryCollection('blog').order('date', 'DESC').limit(3).all(),
 )
-const { data: notes } = await useAsyncData('home-notes', () => queryCollection('notes').order('stem', 'ASC').all())
-
-const filter = ref<'all' | WorkKind>('all')
-const filters: { value: 'all' | WorkKind; label: string }[] = [
-  { value: 'all', label: 'All' },
-  { value: 'venture', label: 'Ventures' },
-  { value: 'open-source', label: 'Open source' },
-]
-const shownWork = computed(() => work.filter((item) => filter.value === 'all' || item.kind === filter.value))
+const { data: notes } = await useAsyncData('home-notes', () =>
+  queryCollection('notes').order('stem', 'ASC').limit(4).all(),
+)
+const { data: places } = await useAsyncData('home-places', () =>
+  queryCollection('places').order('date', 'DESC').limit(3).all(),
+)
 
 useSeoMeta({
   title: 'Unai Mengual',
   titleTemplate: '%s · owlnai',
-  description: 'Tech lead and full-stack developer in Spain. Nuxt, Vue, open source and a soft spot for wikis.',
+  description:
+    'Unai Mengual, owlnai online. Tech lead in Spain, founder of the web design studio sector9 and of Songbird Labs, Roblox tools that empower creators.',
 })
 </script>
 
 <template>
   <div>
     <section class="hero">
-      <h1 class="visually-hidden">{{ person.name }}</h1>
-      <div class="hero__frame">
+      <div class="hero__text">
+        <p class="hero__statement">
+          I build for the web as
+          <NuxtLink :to="brands.owlnai.href" class="chip"
+            ><img :src="brands.owlnai.logo" alt="" class="chip__logo chip__logo--round" />{{ brands.owlnai.name }}</NuxtLink
+          >, design it at
+          <a :href="brands.sector9.href" class="chip"
+            ><img :src="brands.sector9.logo" alt="" class="chip__logo" />{{ brands.sector9.name }}</a
+          >, and make Roblox tools that empower creators at
+          <a :href="brands.songbird.href" class="chip"
+            ><img :src="brands.songbird.logo" alt="" class="chip__logo" />{{ brands.songbird.name }}</a
+          >.
+        </p>
+        <div>
+          <h1 class="hero__name display">{{ person.name }}</h1>
+          <p class="hero__facts mono">
+            <span><span class="hero__dot" aria-hidden="true" /><LocalTime :time-zone="person.timeZone" /> in {{ person.location }}</span>
+            <span>{{ person.languages.join(' / ') }}</span>
+          </p>
+        </div>
+      </div>
+      <figure class="hero__portrait">
         <span class="cross" data-at="tl" />
         <span class="cross" data-at="br" />
-        <p class="hero__motto display">
-          <span v-for="(word, i) in person.motto" :key="word" class="hero__word" :style="{ '--i': i }">{{ word }}</span>
-        </p>
-      </div>
+        <NuxtImg src="/icon.png" :alt="`Portrait of ${person.name}`" width="460" height="460" />
+      </figure>
     </section>
 
-    <section class="intro" aria-label="Introduction">
-      <span class="cross" data-at="tl" />
-      <span class="cross" data-at="tr" />
-      <figure class="intro__portrait">
-        <NuxtImg src="/icon.png" :alt="`Portrait of ${person.name}`" width="320" height="320" sizes="160px" />
-      </figure>
-      <div class="intro__copy">
-        <ContentRenderer v-if="headline" :value="headline" class="intro__lede" />
-        <p class="intro__facts mono">
-          <span><span class="intro__dot" aria-hidden="true" /><LocalTime :time-zone="person.timeZone" /> in {{ person.location }}</span>
-          <span>{{ person.languages.join(' / ') }}</span>
-          <NuxtLink to="/about" class="link">More about me</NuxtLink>
-        </p>
-      </div>
-    </section>
+    <SectionBlock id="about" title="About">
+      <template #aside>
+        <NuxtLink to="/about" class="link">More about me</NuxtLink>
+      </template>
+      <ContentRenderer v-if="headline" :value="headline" class="lede" />
+    </SectionBlock>
 
     <LatelyRow />
 
@@ -66,23 +71,19 @@ useSeoMeta({
       </ul>
     </SectionBlock>
 
-    <SectionBlock id="work" title="Selected work">
-      <div class="filter">
-        <SegmentedControl v-model:value="filter" aria-label="Filter work">
-          <SegmentedControlIndicator />
-          <SegmentedControlItem v-for="option in filters" :key="option.value" :value="option.value">
-            {{ option.label }}
-          </SegmentedControlItem>
-        </SegmentedControl>
-      </div>
+    <SectionBlock id="work" title="Work">
       <ul class="rows">
-        <li v-for="item in shownWork" :key="item.id">
-          <a :href="item.href" class="row">
-            <span class="row__lead mono">{{ item.year }}</span>
+        <li v-for="item in work" :key="item.id">
+          <a :href="item.href" class="row row--logo">
+            <span class="row__logo">
+              <img v-if="item.logo" :src="item.logo" alt="" width="40" height="40" loading="lazy" />
+              <span v-else aria-hidden="true">{{ item.name.charAt(0) }}</span>
+            </span>
             <span class="row__main">
               <span class="row__title display">{{ item.name }}</span>
               <span class="row__desc">{{ item.description }}</span>
             </span>
+            <span class="row__lead mono">{{ item.year }}</span>
             <span class="row__arrow" aria-hidden="true">↗</span>
           </a>
         </li>
@@ -123,34 +124,30 @@ useSeoMeta({
       </ul>
     </SectionBlock>
 
-    <SectionBlock v-if="notes?.length" id="notes" title="Notes">
+    <SectionBlock v-if="places?.length" id="places" title="Places">
       <template #aside>
-        <NuxtLink to="/notes" class="link">All notes</NuxtLink>
+        <NuxtLink to="/places" class="link">All places</NuxtLink>
       </template>
-      <ul class="notes">
-        <li v-for="note in notes" :key="note.path" class="notes__item display">
-          <ContentRenderer :value="note" />
+      <ul class="cards cards--places">
+        <li v-for="place in places" :key="place.path">
+          <PlaceCard :place="place" />
         </li>
       </ul>
     </SectionBlock>
 
-    <SectionBlock id="places" title="Places">
-      <ul class="places">
-        <li v-for="place in places" :key="place.code">
-          <Tooltip toggleable type="label">
-            <TooltipTrigger class="places__flag">
-              <img :src="place.flag" alt="" width="48" height="48" loading="lazy" />
-            </TooltipTrigger>
-            <TooltipContent side="top" :side-offset="8">
-              {{ place.country }}<template v-if="place.note"> · {{ place.note }}</template>
-            </TooltipContent>
-          </Tooltip>
+    <SectionBlock v-if="notes?.length" id="notes" title="Notes">
+      <template #aside>
+        <NuxtLink to="/notes" class="link">All notes</NuxtLink>
+      </template>
+      <ul class="cards cards--notes">
+        <li v-for="note in notes" :key="note.path">
+          <NoteCard :note="note" />
         </li>
       </ul>
     </SectionBlock>
 
     <SectionBlock id="elsewhere" title="Elsewhere">
-      <ul class="social">
+      <ul class="cards cards--social">
         <li v-for="social in socials" :key="social.id">
           <a :href="social.href" class="social__link" rel="me">
             <span class="mono social__name">{{ social.name }}</span>
@@ -166,99 +163,73 @@ useSeoMeta({
 <style scoped>
 .hero {
   display: grid;
-  justify-items: center;
-  padding: clamp(4rem, 12vw, 8.5rem) var(--gutter);
-  background-image: radial-gradient(var(--line) 1px, transparent 1px);
-  background-size: 24px 24px;
-  background-position: center;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  min-height: min(42rem, calc(100svh - 3.5rem));
 }
 
-.hero__frame {
-  --cross-size: 25px;
-  position: relative;
-  padding: clamp(1.5rem, 5vw, 3.25rem) clamp(1.25rem, 5.5vw, 3.5rem) clamp(1.75rem, 5.6vw, 3.75rem);
-  border: 1px solid var(--line-strong);
-  background: var(--paper);
-}
-
-.hero__motto {
+.hero__text {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0 0.22em;
-  font-size: clamp(2.75rem, 9.6vw, 6.75rem);
-  text-align: center;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 3rem;
+  padding: clamp(1.5rem, 3.5vw, 2.5rem) var(--gutter) clamp(1.5rem, 3vw, 2.25rem);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .hero__word {
-    animation: rise 0.7s var(--ease-out) both;
-    animation-delay: calc(var(--i) * 90ms + 80ms);
-  }
-
-  @keyframes rise {
-    from {
-      opacity: 0;
-      translate: 0 0.18em;
-    }
-  }
-}
-
-.intro {
-  position: relative;
-  display: grid;
-  grid-template-columns: var(--label-col) minmax(0, 1fr);
-  border-top: 1px solid var(--line);
-}
-
-.intro__portrait {
-  padding: 2rem var(--gutter);
-}
-
-.intro__portrait img {
-  width: 100%;
-  max-width: 10rem;
-  height: auto;
-  aspect-ratio: 1;
-  object-fit: cover;
-  border: 1px solid var(--line-strong);
-  filter: grayscale(1) contrast(1.04);
-  transition: filter 0.4s;
-}
-
-.intro__portrait:hover img {
-  filter: none;
-}
-
-.intro__copy {
-  padding: 2rem var(--gutter) 2.25rem;
-  border-inline-start: 1px solid var(--line);
-}
-
-.intro__lede {
-  max-width: 44rem;
-  font-family: var(--font-display);
-  font-stretch: 82%;
-  font-weight: 420;
-  font-size: clamp(1.375rem, 2.6vw, 1.875rem);
-  line-height: 1.28;
-  letter-spacing: -0.012em;
+.hero__statement {
+  max-width: 31rem;
+  color: var(--ink-soft);
+  font-size: clamp(1.125rem, 1.9vw, 1.5rem);
+  font-weight: 450;
+  letter-spacing: -0.02em;
+  line-height: 1.4;
   text-wrap: pretty;
 }
 
-.intro__facts {
+.chip {
+  color: var(--ink);
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: underline;
+  text-decoration-color: var(--line-strong);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  transition: text-decoration-color 0.2s;
+}
+
+.chip:hover {
+  text-decoration-color: currentColor;
+}
+
+.chip__logo {
+  display: inline-block;
+  width: 1.15em;
+  height: 1.15em;
+  margin-inline-end: 0.3em;
+  border-radius: 0.25em;
+  box-shadow: 0 0 0 1px var(--line-strong);
+  object-fit: cover;
+  vertical-align: -0.22em;
+}
+
+.chip__logo--round {
+  border-radius: 50%;
+}
+
+.hero__name {
+  font-size: clamp(3.5rem, 11.5vw, 8.75rem);
+  letter-spacing: -0.07em;
+  line-height: 0.86;
+}
+
+.hero__facts {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem 1.5rem;
-  margin-top: 1.75rem;
+  margin-top: 1.5rem;
   color: var(--ink-faint);
 }
 
-.intro__facts .link {
-  color: var(--ink);
-}
-
-.intro__dot {
+.hero__dot {
   display: inline-block;
   width: 0.4rem;
   height: 0.4rem;
@@ -266,6 +237,56 @@ useSeoMeta({
   border-radius: 50%;
   background: var(--accent);
   vertical-align: 0.08em;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero__statement,
+  .hero__name,
+  .hero__facts {
+    animation: rise 0.8s var(--ease-out) both;
+  }
+
+  .hero__name {
+    animation-delay: 80ms;
+  }
+
+  .hero__facts {
+    animation-delay: 160ms;
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      translate: 0 0.75rem;
+    }
+  }
+}
+
+.hero__portrait {
+  --cross-size: 25px;
+  position: relative;
+  margin: var(--gutter);
+}
+
+.hero__portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.04);
+  transition: filter 0.4s;
+}
+
+.hero__portrait:hover img {
+  filter: none;
+}
+
+.lede {
+  max-width: 46rem;
+  padding: 2rem var(--gutter) 2.25rem;
+  font-size: clamp(1.25rem, 2.2vw, 1.625rem);
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+  text-wrap: pretty;
 }
 
 .now__item {
@@ -284,11 +305,6 @@ useSeoMeta({
   font-weight: 550;
 }
 
-.filter {
-  padding: 0.9rem var(--gutter);
-  border-bottom: 1px solid var(--line);
-}
-
 .rows > li + li {
   border-top: 1px solid var(--line);
 }
@@ -302,8 +318,34 @@ useSeoMeta({
   transition: background-color 0.2s;
 }
 
+.row--logo {
+  grid-template-columns: 2.5rem minmax(0, 1fr) auto 1rem;
+  align-items: center;
+}
+
 .row:hover {
   background: var(--sunken);
+}
+
+.row__logo {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: 0.5rem;
+  background: var(--raised);
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  text-transform: lowercase;
+}
+
+.row__logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .row__lead {
@@ -318,11 +360,9 @@ useSeoMeta({
 }
 
 .row__title {
-  font-size: 1.625rem;
-  font-weight: 540;
-  font-stretch: 76%;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
+  font-size: 1.375rem;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
 }
 
 .row__desc {
@@ -345,8 +385,7 @@ useSeoMeta({
 }
 
 .orgs,
-.social,
-.notes {
+.cards {
   display: grid;
   overflow: clip;
 }
@@ -356,8 +395,8 @@ useSeoMeta({
 }
 
 .orgs > li,
-.social > li,
-.notes > li {
+.cards > li {
+  min-width: 0;
   margin: 0 -1px -1px 0;
   border-inline-end: 1px solid var(--line);
   border-block-end: 1px solid var(--line);
@@ -403,52 +442,13 @@ useSeoMeta({
   line-height: 1.5;
 }
 
-.notes {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.notes__item {
-  padding: 1.6rem var(--gutter) 1.8rem;
-  font-size: clamp(1.625rem, 3.2vw, 2.25rem);
-  font-style: italic;
-  font-weight: 470;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
-}
-
-.places {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.9rem;
-  padding: 1.5rem var(--gutter) 1.7rem;
-}
-
-.places__flag {
-  display: block;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: none;
-  cursor: default;
-}
-
-.places__flag img {
-  width: 3rem;
-  height: 3rem;
-  border-radius: 50%;
-  filter: grayscale(1) contrast(1.05);
-  box-shadow: 0 0 0 1px var(--line-strong);
-  transition: filter 0.3s;
-}
-
-.places__flag:hover img,
-.places__flag:focus-visible img,
-.places__flag[aria-expanded='true'] img {
-  filter: none;
-}
-
-.social {
+.cards--places,
+.cards--social {
   grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.cards--notes {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .social__link {
@@ -493,24 +493,22 @@ useSeoMeta({
 }
 
 @media (max-width: 52rem) {
-  .intro {
+  .hero {
     grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
   }
 
-  .intro__portrait {
-    padding-bottom: 0;
+  .hero__text {
+    gap: 2.5rem;
   }
 
-  .intro__portrait img {
-    max-width: 6rem;
+  .hero__portrait {
+    aspect-ratio: 1;
+    margin-top: 0;
   }
 
-  .intro__copy {
-    border-inline-start: 0;
-    padding-top: 1.5rem;
-  }
-
-  .social {
+  .cards--places,
+  .cards--social {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -522,10 +520,26 @@ useSeoMeta({
   .row__lead {
     grid-column: 1 / -1;
   }
+
+  .row--logo {
+    grid-template-columns: 2.5rem minmax(0, 1fr) 1rem;
+    align-items: start;
+    gap: 0.4rem 0.9rem;
+  }
+
+  .row--logo .row__lead {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .row--logo .row__logo {
+    grid-row: span 2;
+  }
 }
 
 @media (max-width: 34rem) {
-  .notes {
+  .cards--notes,
+  .cards--places {
     grid-template-columns: minmax(0, 1fr);
   }
 }

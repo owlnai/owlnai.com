@@ -71,11 +71,9 @@ useHead({
 }
 
 .post__title {
-  font-size: clamp(1.75rem, 3.6vw, 2.5rem);
-  font-weight: 540;
-  font-stretch: 76%;
-  letter-spacing: -0.025em;
-  line-height: 1.05;
+  font-size: clamp(1.5rem, 3vw, 2.125rem);
+  letter-spacing: -0.04em;
+  line-height: 1.1;
   text-wrap: balance;
 }
 

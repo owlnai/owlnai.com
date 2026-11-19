@@ -16,6 +16,4 @@ These days, I do a little bit of everything. At MRM, I work for some of the worl
 
 – Gave Nuxt, UnoCSS and accessibility [workshops](https://github.com/slidevjs/docs-es), collaborating with popular Spanish developer Twitch streamers.
 
-– Built [Lofi in Your Desktop](https://github.com/owlnai/lofi-in-your-desktop), a simple utility for developers who want ambient music while coding.
-
 – Mentored aspiring developers and contributed to various Vue.js ecosystem projects, always focusing on developer experience and community building.

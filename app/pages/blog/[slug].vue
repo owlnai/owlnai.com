@@ -47,7 +47,7 @@ if (post.value.canonical) {
 
 article :deep(.page-intro__title) {
   max-width: 18ch;
-  font-size: clamp(2.5rem, 7vw, 4.75rem);
+  font-size: clamp(2.25rem, 5.6vw, 3.75rem);
 }
 
 .body {

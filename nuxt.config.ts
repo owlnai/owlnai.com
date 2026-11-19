@@ -3,9 +3,8 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   css: [
     '~/assets/css/main.css',
-    '@fontsource-variable/noto-serif-display/wdth.css',
-    '@fontsource-variable/noto-serif-display/wdth-italic.css',
     '@fontsource-variable/geist/wght.css',
+    '@fontsource-variable/geist/wght-italic.css',
     '@fontsource-variable/geist-mono/wght.css',
   ],
   site: {
@@ -37,6 +36,8 @@ export default defineNuxtConfig({
     '/about': { prerender: true },
     '/uses': { prerender: true },
     '/notes': { prerender: true },
+    '/places': { prerender: true },
+    '/places/**': { prerender: true },
     '/blog': { prerender: true },
     '/blog/**': { prerender: true },
     '/rss.xml': { prerender: true },

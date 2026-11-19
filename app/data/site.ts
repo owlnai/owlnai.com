@@ -4,8 +4,28 @@ export const person = {
   location: 'Spain',
   timeZone: 'Europe/Madrid',
   languages: ['ENG', 'ESP'],
-  motto: ['Curious.', 'Careful.', 'Kind.'],
 }
+
+export interface Brand {
+  name: string
+  logo: string
+  href: string
+}
+
+// The personal brand and the two ventures, as they appear in the hero
+export const brands = {
+  owlnai: { name: 'owlnai', logo: '/icon.png', href: '/about' },
+  sector9: {
+    name: 'sector9',
+    logo: 'https://github.com/section9-studio.png?size=96',
+    href: 'https://section9.studio',
+  },
+  songbird: {
+    name: 'Songbird Labs',
+    logo: 'https://github.com/songbirdlabs.png?size=96',
+    href: 'https://github.com/songbirdlabs',
+  },
+} satisfies Record<string, Brand>
 
 export interface NowItem {
   lead: string
@@ -21,16 +41,16 @@ export const now: NowItem[] = [
     tail: ', building for some of the world’s most recognisable brands.',
   },
   {
-    lead: 'Founder of',
-    name: 'Songbird Labs',
-    href: 'https://github.com/songbirdlabs',
-    tail: ', where Roblox players create, innovate and manage.',
+    lead: 'Running',
+    name: 'sector9',
+    href: 'https://section9.studio',
+    tail: ', my web design studio.',
   },
   {
-    lead: 'Running',
-    name: 'section9 studio',
-    href: 'https://section9.studio',
-    tail: ', a small creative agency for handcrafted web design.',
+    lead: 'Building',
+    name: 'Songbird Labs',
+    href: 'https://github.com/songbirdlabs',
+    tail: ', Roblox tools that empower creators.',
   },
   {
     lead: 'Back in open source after some time away, starting with',
@@ -40,82 +60,54 @@ export const now: NowItem[] = [
   },
 ]
 
-export type WorkKind = 'venture' | 'open-source'
-
 export interface WorkItem {
   id: string
   name: string
   year: string
-  kind: WorkKind
   description: string
   href: string
+  logo?: string
 }
 
 export const work: WorkItem[] = [
   {
+    id: 'sector9',
+    name: 'sector9',
+    year: 'Now',
+    description: 'My web design studio.',
+    href: brands.sector9.href,
+    logo: brands.sector9.logo,
+  },
+  {
     id: 'songbird',
     name: 'Songbird Labs',
     year: 'Now',
-    kind: 'venture',
-    description: 'A studio for Roblox players to create, innovate and manage.',
-    href: 'https://github.com/songbirdlabs',
-  },
-  {
-    id: 'section9',
-    name: 'section9 studio',
-    year: 'Now',
-    kind: 'venture',
-    description: 'Creative agency providing handcrafted solutions and web design.',
-    href: 'https://section9.studio',
+    description: 'Roblox tools that empower creators.',
+    href: brands.songbird.href,
+    logo: brands.songbird.logo,
   },
   {
     id: 'rex-git',
     name: 'rex-git',
     year: '2026',
-    kind: 'open-source',
     description: 'A Git side pane for Rex: diffs, staging, Claude-drafted commits and sync.',
     href: 'https://github.com/owlnai/rex-git',
-  },
-  {
-    id: 'lofi',
-    name: 'Lofi in Your Desktop',
-    year: '2023',
-    kind: 'open-source',
-    description: 'Lofi Girl in a lightweight Tauri app, for ambient music while you code.',
-    href: 'https://github.com/owlnai/lofi-in-your-desktop',
-  },
-  {
-    id: 'sphynx',
-    name: 'Sphynx',
-    year: '2022',
-    kind: 'open-source',
-    description: 'A Discord bot that checks every message for phishing links, like fake Nitro.',
-    href: 'https://github.com/owlnai/sphynx',
   },
   {
     id: 'nuxt-rule',
     name: 'The Nuxt Rule',
     year: '2022',
-    kind: 'open-source',
     description: 'If it exists, there’s a Nuxt module of it. An experiment.',
     href: 'https://github.com/owlnai/the-nuxt-rule',
+    logo: 'https://raw.githubusercontent.com/owlnai/the-nuxt-rule/HEAD/public/icon.png',
   },
   {
     id: 'isnuxt3ready',
     name: 'isnuxt3ready',
     year: '2021',
-    kind: 'open-source',
     description:
       'A community-built compatibility guide for Nuxt 3 modules. Archived in 2024, once the official modules directory took over.',
     href: 'https://github.com/owlnai/isnuxt3ready',
-  },
-  {
-    id: 'watxt',
-    name: 'watxt',
-    year: '2019',
-    kind: 'open-source',
-    description: 'A zero-dependency WhatsApp log parser.',
-    href: 'https://github.com/owlnai/watxt',
   },
 ]
 
@@ -211,13 +203,13 @@ export const milestones: Milestone[] = [
     year: '2023',
     dateTime: '2023',
     title: 'Writing and workshops',
-    description: 'Wrote about future-proof UnoCSS, and shipped Lofi in Your Desktop with Tauri.',
+    description: 'Wrote about future-proof UnoCSS, and ran Nuxt, UnoCSS and accessibility workshops.',
   },
   {
     year: '2022',
     dateTime: '2022',
-    title: 'Bots and experiments',
-    description: 'Sphynx, a Discord bot against phishing links, and The Nuxt Rule.',
+    title: 'The Nuxt Rule',
+    description: 'An experiment: if it exists, there’s a Nuxt module of it.',
   },
   {
     year: '2021',

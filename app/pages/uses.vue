@@ -45,10 +45,8 @@ useSeoMeta({
 }
 
 .uses__name {
-  font-size: 1.5rem;
-  font-weight: 540;
-  font-stretch: 76%;
-  letter-spacing: -0.02em;
+  font-size: 1.25rem;
+  letter-spacing: -0.03em;
   line-height: 1.15;
 }
 

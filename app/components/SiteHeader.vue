@@ -2,13 +2,15 @@
 const links = [
   { to: '/about', label: 'About' },
   { to: '/blog', label: 'Blog' },
+  { to: '/places', label: 'Places' },
+  { to: '/notes', label: 'Notes' },
   { to: '/uses', label: 'Uses' },
 ]
 </script>
 
 <template>
   <header class="header">
-    <NuxtLink to="/" class="header__mark display" aria-label="owlnai, home">owlnai</NuxtLink>
+    <NuxtLink to="/" class="header__mark" aria-label="owlnai, home">owlnai</NuxtLink>
     <nav class="header__nav" aria-label="Main">
       <NuxtLink v-for="link in links" :key="link.to" :to="link.to" class="header__link mono">
         {{ link.label }}
@@ -24,9 +26,9 @@ const links = [
   top: 0;
   z-index: 10;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 1.5rem;
-  height: 3.5rem;
+  min-height: 3.5rem;
   padding-inline: var(--gutter);
   border-bottom: 1px solid var(--line);
   background: color-mix(in oklab, var(--paper) 86%, transparent);
@@ -34,16 +36,16 @@ const links = [
 }
 
 .header__mark {
-  font-size: 1.625rem;
-  font-weight: 600;
-  letter-spacing: -0.03em;
-  padding-bottom: 0.15em;
+  font-size: 1.125rem;
+  font-weight: 650;
+  letter-spacing: -0.05em;
 }
 
+/* Links spread evenly between the wordmark and search */
 .header__nav {
+  flex: 1;
   display: flex;
-  gap: 1.25rem;
-  margin-inline-start: auto;
+  justify-content: space-evenly;
 }
 
 .header__link {
@@ -67,13 +69,22 @@ const links = [
   background: currentColor;
 }
 
-@media (max-width: 30rem) {
+@media (max-width: 44rem) {
   .header {
-    gap: 0.9rem;
+    justify-content: space-between;
+  }
+
+  .header__mark {
+    line-height: 3.5rem;
   }
 
   .header__nav {
-    gap: 0.9rem;
+    order: 3;
+    flex-basis: 100%;
+    justify-content: space-between;
+    margin-inline: calc(var(--gutter) * -1);
+    padding: 0.35rem var(--gutter);
+    border-top: 1px solid var(--line);
   }
 }
 </style>
