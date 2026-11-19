@@ -1,0 +1,48 @@
+<script setup lang="ts">
+import { person } from '~/data/site'
+
+const year = new Date().getFullYear()
+</script>
+
+<template>
+  <footer class="footer">
+    <span class="cross" data-at="tl" />
+    <span class="cross" data-at="tr" />
+    <p class="footer__sign display">Be kind.</p>
+    <div class="footer__row">
+      <p class="footer__note">© {{ year }} {{ person.name }}</p>
+      <ThemeSwitch />
+    </div>
+  </footer>
+</template>
+
+<style scoped>
+.footer {
+  position: relative;
+  padding: clamp(2.5rem, 7vw, 4.5rem) var(--gutter) 2rem;
+  border-top: 1px solid var(--line);
+}
+
+.footer__sign {
+  font-size: clamp(3rem, 11vw, 7rem);
+  font-style: italic;
+  font-weight: 480;
+  color: var(--ink);
+}
+
+.footer__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  margin-top: clamp(2rem, 5vw, 3.5rem);
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+}
+
+.footer__note {
+  color: var(--ink-faint);
+  font-size: 0.875rem;
+}
+</style>

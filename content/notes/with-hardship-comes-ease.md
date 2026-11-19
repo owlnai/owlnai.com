@@ -1,0 +1,1 @@
+With hardship comes ease.

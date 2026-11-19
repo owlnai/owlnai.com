@@ -1,22 +1,26 @@
-<template>
-  <div class="min-h-screen font-sans flex flex-col dark:bg-zinc-950 transition-colors duration-300 px-4 pb-12">
-    <NuxtRouteAnnouncer />
-    <navigationHeader />
+<script setup lang="ts">
+const preferences = [colorScheme]
 
-    <main>
-      <NuxtLayout>
+useShortcut(
+  'd',
+  () => {
+    const { resolved } = colorScheme.get()
+    colorScheme.set(resolved === 'dark' ? 'light' : 'dark')
+  },
+  { description: 'Toggle dark mode' },
+)
+</script>
+
+<template>
+  <Preferences :preferences="preferences">
+    <div class="site">
+      <a class="skip mono" href="#main">Skip to content</a>
+      <NuxtRouteAnnouncer />
+      <SiteHeader />
+      <main id="main">
         <NuxtPage />
-      </NuxtLayout>
-    </main>
-  </div>
+      </main>
+      <SiteFooter />
+    </div>
+  </Preferences>
 </template>
-<style>
-.page-enter-active,
-.page-leave-active {
-  transition: all 0.2s;
-}
-.page-enter-from,
-.page-leave-to {
-  opacity: 0;
-}
-</style>
