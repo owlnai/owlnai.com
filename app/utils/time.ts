@@ -20,8 +20,8 @@ export function monthYear(iso: string) {
   return new Intl.DateTimeFormat('en-GB', { month: 'short', year: 'numeric', timeZone: 'UTC' }).format(new Date(iso))
 }
 
+// A month-only date ('2025-11') reads as "November 2025"
 export function longDate(iso: string) {
-  return new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(
-    new Date(iso),
-  )
+  const day = /^\d{4}-\d{2}$/.test(iso) ? undefined : 'numeric'
+  return new Intl.DateTimeFormat('en-GB', { day, month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(iso))
 }

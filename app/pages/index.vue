@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { contributions, person, socials, work } from '~/data/site'
+import { brands, openSource, person, socials } from '~/data/site'
 
 const { data: headline } = await useAsyncData('headline', () => queryCollection('content').path('/headline').first())
 const { data: posts } = await useAsyncData('home-posts', () =>
@@ -11,6 +11,10 @@ const { data: notes } = await useAsyncData('home-notes', () =>
 const { data: places } = await useAsyncData('home-places', () =>
   queryCollection('places').order('date', 'DESC').limit(3).all(),
 )
+
+// Fetched in the browser so the prerendered page still shows current counts
+const { data: stars } = useLazyFetch('/api/stars', { server: false, cache: 'no-cache', default: () => ({}) })
+const starCount = new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 })
 
 useSeoMeta({
   title: 'Unai Mengual',
@@ -24,10 +28,21 @@ useSeoMeta({
   <div>
     <section class="hero">
       <div class="hero__text">
-        <div class="hero__statement">
-          <ContentRenderer v-if="headline" :value="headline" />
-          <p class="hero__more"><NuxtLink to="/about" class="link">More about me</NuxtLink></p>
-        </div>
+        <p class="hero__statement">
+          I'm a tech lead at
+          <a :href="brands.mrm.href" class="chip"
+            ><img :src="brands.mrm.logo" alt="" class="chip__logo" />{{ brands.mrm.name }}</a
+          >. I build for the web as
+          <NuxtLink :to="brands.owlnai.href" class="chip"
+            ><img :src="brands.owlnai.logo" alt="" class="chip__logo chip__logo--round" />{{ brands.owlnai.name }}</NuxtLink
+          >, design it at
+          <a :href="brands.sector9.href" class="chip"
+            ><img :src="brands.sector9.logo" alt="" class="chip__logo" />{{ brands.sector9.name }}</a
+          >, and make Roblox tools that empower creators at
+          <a :href="brands.songbird.href" class="chip"
+            ><img :src="brands.songbird.logo" alt="" class="chip__logo" />{{ brands.songbird.name }}</a
+          >.
+        </p>
         <h1 class="hero__name display">{{ person.name }}</h1>
       </div>
       <figure class="hero__portrait">
@@ -37,39 +52,40 @@ useSeoMeta({
       </figure>
     </section>
 
+    <SectionBlock id="about" title="About">
+      <template #aside>
+        <NuxtLink to="/about" class="link">More about me</NuxtLink>
+      </template>
+      <ContentRenderer v-if="headline" :value="headline" class="lede" />
+    </SectionBlock>
+
     <LatelyRow />
 
-    <SectionBlock id="work" title="Work">
-      <ul class="rows">
-        <li v-for="item in work" :key="item.id">
-          <a :href="item.href" class="row row--logo">
-            <span class="row__logo">
-              <img v-if="item.logo" :src="item.logo" alt="" width="40" height="40" loading="lazy" />
+    <SectionBlock id="open-source" title="Open source">
+      <ul class="orgs">
+        <li v-for="item in openSource" :key="item.id">
+          <a :href="item.href" class="orgs__link">
+            <span class="orgs__avatar">
+              <img v-if="item.avatar" :src="item.avatar" alt="" width="28" height="28" loading="lazy" />
               <span v-else aria-hidden="true">{{ item.name.charAt(0) }}</span>
             </span>
-            <span class="row__main">
-              <span class="row__title display">{{ item.name }}</span>
-              <span class="row__desc">{{ item.description }}</span>
+            <span class="orgs__name">{{ item.name }}</span>
+            <span
+              v-if="stars[item.id]"
+              class="orgs__stars mono"
+              :aria-label="`${stars[item.id]} GitHub stars`"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"
+                />
+              </svg>
+              {{ starCount.format(stars[item.id]!) }}
             </span>
-            <span class="row__lead mono">{{ item.year }}</span>
-            <span class="row__arrow" aria-hidden="true">↗</span>
+            <span class="orgs__summary">{{ item.summary }}</span>
           </a>
         </li>
       </ul>
-    </SectionBlock>
-
-    <SectionBlock id="contributions" title="Contributions">
-      <p class="contrib">
-        Patches, translations and fixes for projects I use:
-        <template v-for="(item, i) in contributions" :key="item.id">
-          <a :href="item.href" class="contrib__link"
-            ><img :src="item.avatar" alt="" width="20" height="20" loading="lazy" class="contrib__logo" />{{
-              item.name
-            }}</a
-          ><template v-if="i < contributions.length - 2">, </template
-          ><template v-else-if="i === contributions.length - 2"> and </template>
-        </template>.
-      </p>
     </SectionBlock>
 
     <SectionBlock v-if="posts?.length" id="writing" title="Writing">
@@ -141,19 +157,43 @@ useSeoMeta({
 }
 
 .hero__statement {
-  max-width: 33rem;
+  max-width: 32rem;
   color: var(--ink-soft);
-  font-size: clamp(1.125rem, 1.7vw, 1.375rem);
+  font-size: clamp(1.125rem, 1.9vw, 1.5rem);
   font-weight: 450;
   letter-spacing: -0.02em;
   line-height: 1.4;
   text-wrap: pretty;
 }
 
-.hero__more {
-  margin-top: 1rem;
+.chip {
   color: var(--ink);
-  font-size: 1rem;
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: underline;
+  text-decoration-color: var(--line-strong);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  transition: text-decoration-color 0.2s;
+}
+
+.chip:hover {
+  text-decoration-color: currentColor;
+}
+
+.chip__logo {
+  display: inline-block;
+  width: 1.15em;
+  height: 1.15em;
+  margin-inline-end: 0.3em;
+  border-radius: 0.25em;
+  box-shadow: 0 0 0 1px var(--line-strong);
+  object-fit: cover;
+  vertical-align: -0.22em;
+}
+
+.chip__logo--round {
+  border-radius: 50%;
 }
 
 .hero__name {
@@ -198,38 +238,91 @@ useSeoMeta({
   filter: none;
 }
 
-.contrib {
-  max-width: 44rem;
-  padding: 1.5rem var(--gutter) 1.7rem;
-  color: var(--ink-soft);
-  font-size: 1.0625rem;
-  line-height: 1.7;
+.lede {
+  max-width: 46rem;
+  padding: 2rem var(--gutter) 2.25rem;
+  font-size: clamp(1.25rem, 2.2vw, 1.625rem);
+  line-height: 1.35;
+  letter-spacing: -0.02em;
   text-wrap: pretty;
 }
 
-.contrib__link {
-  color: var(--ink);
+.orgs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16.5rem, 1fr));
+  overflow: clip;
+}
+
+.orgs > li {
+  min-width: 0;
+  margin: 0 -1px -1px 0;
+  border-inline-end: 1px solid var(--line);
+  border-block-end: 1px solid var(--line);
+}
+
+.orgs__link {
+  display: grid;
+  grid-template-columns: 1.75rem minmax(0, 1fr) auto;
+  gap: 0.1rem 0.75rem;
+  align-items: center;
+  height: 100%;
+  padding: 1.1rem var(--gutter);
+  transition: background-color 0.2s;
+}
+
+.orgs__link:hover {
+  background: var(--sunken);
+}
+
+.orgs__avatar {
+  grid-row: span 2;
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--raised);
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  text-transform: lowercase;
+}
+
+.orgs__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.orgs__name {
   font-weight: 550;
+  overflow-wrap: anywhere;
+}
+
+.orgs__stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--ink-faint);
+  font-size: 0.75rem;
   white-space: nowrap;
-  text-decoration: underline;
-  text-decoration-color: var(--line-strong);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.2em;
-  transition: text-decoration-color 0.2s;
 }
 
-.contrib__link:hover {
-  text-decoration-color: currentColor;
+.orgs__stars svg {
+  width: 0.8rem;
+  height: 0.8rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linejoin: round;
 }
 
-.contrib__logo {
-  display: inline-block;
-  width: 1.15em;
-  height: 1.15em;
-  margin-inline-end: 0.35em;
-  border-radius: 0.25em;
-  box-shadow: 0 0 0 1px var(--line-strong);
-  vertical-align: -0.2em;
+.orgs__summary {
+  grid-column: 2 / -1;
+  color: var(--ink-faint);
+  font-size: 0.875rem;
 }
 
 .rows > li + li {
@@ -245,34 +338,8 @@ useSeoMeta({
   transition: background-color 0.2s;
 }
 
-.row--logo {
-  grid-template-columns: 2.5rem minmax(0, 1fr) auto 1rem;
-  align-items: center;
-}
-
 .row:hover {
   background: var(--sunken);
-}
-
-.row__logo {
-  display: grid;
-  place-items: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  overflow: hidden;
-  border: 1px solid var(--line-strong);
-  border-radius: 0.5rem;
-  background: var(--raised);
-  color: var(--ink-soft);
-  font-family: var(--font-mono);
-  font-size: 1rem;
-  text-transform: lowercase;
-}
-
-.row__logo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
 
 .row__lead {
@@ -290,13 +357,6 @@ useSeoMeta({
   font-size: 1.375rem;
   letter-spacing: -0.03em;
   line-height: 1.15;
-}
-
-.row__desc {
-  max-width: 34rem;
-  color: var(--ink-soft);
-  font-size: 0.9375rem;
-  line-height: 1.5;
 }
 
 .row__arrow {
@@ -400,21 +460,6 @@ useSeoMeta({
 
   .row__lead {
     grid-column: 1 / -1;
-  }
-
-  .row--logo {
-    grid-template-columns: 2.5rem minmax(0, 1fr) 1rem;
-    align-items: start;
-    gap: 0.4rem 0.9rem;
-  }
-
-  .row--logo .row__lead {
-    grid-column: 2;
-    grid-row: 2;
-  }
-
-  .row--logo .row__logo {
-    grid-row: span 2;
   }
 }
 

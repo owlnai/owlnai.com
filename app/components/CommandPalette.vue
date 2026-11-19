@@ -22,7 +22,7 @@ const groups: { label: string; items: PaletteCommand[] }[] = [
       { value: 'places', label: 'Places', hint: '/places', keywords: ['travel', 'trips', 'photos'], run: () => router.push('/places') },
       { value: 'notes', label: 'Notes', hint: '/notes', keywords: ['snippets', 'quotes', 'code'], run: () => router.push('/notes') },
       { value: 'uses', label: 'Uses', hint: '/uses', keywords: ['setup', 'tools', 'gear'], run: () => router.push('/uses') },
-      { value: 'work', label: 'Work', hint: '/#work', keywords: ['projects', 'mrm', 'sector9', 'songbird'], run: () => router.push('/#work') },
+      { value: 'open-source', label: 'Open source', hint: '/#open-source', keywords: ['projects', 'contributions'], run: () => router.push('/#open-source') },
       { value: 'rss', label: 'RSS feed', hint: '/rss.xml', keywords: ['subscribe'], run: () => window.open('/rss.xml', '_blank', 'noopener') },
     ],
   },

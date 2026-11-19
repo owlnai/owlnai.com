@@ -6,12 +6,17 @@ export const person = {
 
 export interface Brand {
   name: string
-  logo: string
   href: string
+  logo?: string
 }
 
-// The personal brand and the two ventures, as they appear in the hero
+// The day job, the personal brand and the two ventures, as they appear in the hero
 export const brands = {
+  mrm: {
+    name: 'MRM',
+    logo: '/mrm.svg',
+    href: 'https://www.mrm.com',
+  },
   owlnai: { name: 'owlnai', logo: '/icon.png', href: '/about' },
   sector9: {
     name: 'sector9',
@@ -69,92 +74,69 @@ export const facts = [
   { label: 'Speaks', value: 'English, Spanish' },
 ]
 
-export interface WorkItem {
+// My own projects first, then projects by others that I have contributed to
+export interface OpenSourceItem {
   id: string
   name: string
-  year: string
-  description: string
+  summary: string
   href: string
-  logo?: string
+  avatar?: string
 }
 
-export const work: WorkItem[] = [
-  {
-    id: 'mrm',
-    name: 'MRM',
-    year: 'Now',
-    description: 'Tech lead, building for some of the world’s most recognizable brands.',
-    href: 'https://www.mrm.com',
-  },
-  {
-    id: 'sector9',
-    name: 'sector9',
-    year: 'Now',
-    description: 'My web design studio.',
-    href: brands.sector9.href,
-    logo: brands.sector9.logo,
-  },
-  {
-    id: 'songbird',
-    name: 'Songbird Labs',
-    year: 'Now',
-    description: 'Roblox tools that empower creators.',
-    href: brands.songbird.href,
-    logo: brands.songbird.logo,
-  },
+export const openSource: OpenSourceItem[] = [
   {
     id: 'rex-git',
     name: 'rex-git',
-    year: '2026',
-    description: 'A Git side pane for Rex: diffs, staging, Claude-drafted commits and sync.',
+    summary: 'A Git side pane for Rex',
     href: 'https://github.com/owlnai/rex-git',
   },
   {
     id: 'nuxt-rule',
     name: 'The Nuxt Rule',
-    year: '2022',
-    description: 'If it exists, there’s a Nuxt module of it. An experiment.',
+    summary: 'If it exists, there’s a Nuxt module of it',
     href: 'https://github.com/owlnai/the-nuxt-rule',
-    logo: 'https://raw.githubusercontent.com/owlnai/the-nuxt-rule/HEAD/public/icon.png',
+    avatar: 'https://raw.githubusercontent.com/owlnai/the-nuxt-rule/HEAD/public/icon.png',
   },
   {
     id: 'isnuxt3ready',
     name: 'isnuxt3ready',
-    year: '2021',
-    description:
-      'A community-built compatibility guide for Nuxt 3 modules. Archived in 2024, once the official modules directory took over.',
+    summary: 'A compatibility guide for Nuxt 3 modules',
     href: 'https://github.com/owlnai/isnuxt3ready',
   },
-]
-
-// Projects by other people that I have sent patches to. Kept small on purpose.
-export interface Contribution {
-  id: string
-  name: string
-  avatar: string
-  href: string
-}
-
-export const contributions: Contribution[] = [
-  { id: 'nuxt', name: 'Nuxt', avatar: 'https://github.com/nuxt.png?size=96', href: 'https://github.com/nuxt/nuxt' },
+  {
+    id: 'nuxt',
+    name: 'nuxt/nuxt',
+    summary: 'The full-stack Vue framework',
+    href: 'https://github.com/nuxt/nuxt',
+    avatar: 'https://github.com/nuxt.png?size=96',
+  },
   {
     id: 'slidev',
-    name: 'Slidev docs (Spanish)',
-    avatar: 'https://github.com/slidevjs.png?size=96',
+    name: 'slidevjs/docs-es',
+    summary: 'Slidev docs, in Spanish',
     href: 'https://github.com/slidevjs/docs-es',
+    avatar: 'https://github.com/slidevjs.png?size=96',
   },
   {
     id: 'wikioasis',
     name: 'WikiOasis',
-    avatar: 'https://github.com/WikiOasis.png?size=96',
+    summary: 'A space for anybody to write about anything',
     href: 'https://github.com/WikiOasis',
+    avatar: 'https://github.com/WikiOasis.png?size=96',
   },
-  { id: 'afordin', name: 'Afordin', avatar: 'https://github.com/Afordin.png?size=96', href: 'https://github.com/Afordin' },
+  {
+    id: 'afordin',
+    name: 'Afordin',
+    summary: 'A Spanish-speaking programming community',
+    href: 'https://github.com/Afordin',
+    avatar: 'https://github.com/Afordin.png?size=96',
+  },
   {
     id: 'taekwondo',
-    name: 'taekwondo-app',
-    avatar: 'https://github.com/Tekwondo-RAM.png?size=96',
+    name: 'Tekwondo-RAM/taekwondo-app',
+    summary: 'A taekwondo PWA',
     href: 'https://github.com/Tekwondo-RAM/taekwondo-app',
+    avatar: 'https://github.com/Tekwondo-RAM.png?size=96',
   },
 ]
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { uses } from '~/data/uses'
+import { uses, usesUpdated } from '~/data/uses'
 
 useSeoMeta({
   title: 'Uses',
@@ -9,25 +9,43 @@ useSeoMeta({
 
 <template>
   <div>
-    <PageIntro title="The tools on my desk." />
+    <PageIntro title="The tools I reach for.">
+      <p class="updated">Updated <time :datetime="usesUpdated">{{ monthYear(usesUpdated) }}</time></p>
+    </PageIntro>
 
     <SectionBlock
       v-for="group in uses"
-      :id="group.category.toLowerCase()"
-      :key="group.category"
+      :id="group.id"
+      :key="group.id"
       :title="group.category"
     >
       <ul class="tools">
         <li v-for="item in group.items" :key="item.name" class="tool">
           <span class="tool__logo" :data-kind="item.icon ? 'icon' : 'tile'">
             <img v-if="item.icon" :src="item.icon" alt="" width="48" height="48" loading="lazy" />
-            <svg v-else-if="item.glyph" viewBox="0 0 24 24" aria-hidden="true">
+            <span
+              v-else-if="item.logo && item.logoMono"
+              class="tool__mono"
+              :style="{ '--mark': `url(${item.logo})` }"
+              aria-hidden="true"
+            />
+            <img
+              v-else-if="item.logo"
+              class="tool__mark"
+              :data-inset="item.logoInset ? '' : undefined"
+              :src="item.logo"
+              alt=""
+              width="48"
+              height="48"
+              loading="lazy"
+            />
+            <svg v-else-if="item.glyph" :viewBox="item.glyphViewBox ?? '0 0 24 24'" aria-hidden="true">
               <path :d="item.glyph" />
             </svg>
             <span v-else aria-hidden="true">{{ item.name.charAt(0) }}</span>
           </span>
-          <span class="tool__name display">{{ item.name }}</span>
-          <span class="tool__desc">{{ item.description }}</span>
+          <span class="tool__name display" :data-solo="item.description ? undefined : ''">{{ item.name }}</span>
+          <span v-if="item.description" class="tool__desc">{{ item.description }}</span>
         </li>
       </ul>
     </SectionBlock>
@@ -35,6 +53,11 @@ useSeoMeta({
 </template>
 
 <style scoped>
+.updated {
+  margin-top: 1.5rem;
+  color: var(--ink-soft);
+}
+
 .tools {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -77,6 +100,27 @@ useSeoMeta({
   height: 100%;
 }
 
+/* A brand's site icon fills the tile, or sits padded inside it when it has no background */
+.tool__logo[data-kind='tile'] {
+  overflow: clip;
+}
+
+.tool__mark {
+  object-fit: cover;
+}
+
+.tool__mark[data-inset] {
+  padding: 0.5rem;
+  object-fit: contain;
+}
+
+.tool__mono {
+  width: 100%;
+  height: 100%;
+  background: var(--ink);
+  mask: var(--mark) center / calc(100% - 0.75rem) auto no-repeat;
+}
+
 .tool__logo svg {
   width: 1.375rem;
   height: 1.375rem;
@@ -88,6 +132,12 @@ useSeoMeta({
   font-size: 1.125rem;
   letter-spacing: -0.03em;
   line-height: 1.25;
+}
+
+/* A tool with no description centres its name against the logo */
+.tool__name[data-solo] {
+  grid-row: span 2;
+  align-self: center;
 }
 
 .tool__desc {
