@@ -31,7 +31,7 @@ defineProps<{ id: string; title: string }>()
   flex-direction: column;
   align-items: flex-start;
   gap: 1rem;
-  padding: 2rem var(--gutter);
+  padding: 3rem var(--gutter);
 }
 
 .section__title {
@@ -59,7 +59,8 @@ defineProps<{ id: string; title: string }>()
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding-bottom: 1rem;
+    padding-top: 2.5rem;
+    padding-bottom: 1.25rem;
   }
 
   .section__body {
