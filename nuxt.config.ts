@@ -53,9 +53,8 @@ export default defineNuxtConfig({
     name: 'owlnai-com',
     host: 'cloudflare',
     // Nitro's cache in Workers KV (binding CACHE), shared by every Worker instance.
-    // The all-zero id is a placeholder: ViteHub leaves it out of the generated wrangler.json, so Wrangler
-    // creates the namespace on the first deploy. Put the real id here after that.
-    cache: { driver: 'cloudflare', namespaceId: '00000000000000000000000000000000' },
+    // Wrangler created this namespace on the first deploy, on 2026-11-20.
+    cache: { driver: 'cloudflare', namespaceId: '1cfc7a47c2e444008c11602cdd339308' },
   },
   // Every sitemap URL is known at build time, so write sitemap.xml as a file instead of a Worker route
   sitemap: { zeroRuntime: true },

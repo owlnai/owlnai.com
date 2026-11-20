@@ -7,5 +7,11 @@
   // ViteHub's tested date. From 2025-09-01 Workers provide node:fs, which Nuxt Content's server code imports.
   "compatibility_date": "2026-04-20",
   "compatibility_flags": ["nodejs_compat"],
+  // Every deploy replaces the Worker's plain variables with these, so variables added in the dashboard
+  // disappear on the next push. The Last.fm API key is a secret instead, which deploys leave alone:
+  // `npx wrangler secret put NUXT_LASTFM_API_KEY --name owlnai-com`
+  "vars": {
+    "NUXT_LASTFM_USER": "owlnai"
+  },
   "observability": { "enabled": true }
 }
