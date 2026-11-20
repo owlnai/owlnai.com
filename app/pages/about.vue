@@ -2,7 +2,7 @@
 import { flags } from '~/data/flags'
 import { community, milestones, names } from '~/data/site'
 
-const { data: page } = await useAsyncData('about', () => queryCollection('content').path('/about').first())
+const { data: page } = await useAsyncData('about', () => $fetch('/api/site/pages/about'))
 
 useSeoMeta({
   title: 'About',
@@ -19,8 +19,9 @@ const nextLaneAt = (index: number) => laneAt(index < milestones.length - 1 ? ind
 const tilts = { contributions: -2.5, design: 2, here: -1.5 }
 
 // Every trip becomes a stamp on the step for its year (or the latest step before it)
-const { data: places } = await useAsyncData('journey-places', () =>
-  queryCollection('places').select('title', 'path', 'date', 'country').order('date', 'ASC').all(),
+// Oldest first, so each step's stamps read in the order of the trips
+const { data: places } = await useAsyncData('journey-places', async () =>
+  (await $fetch('/api/site/places')).map(({ title, path, date, country }) => ({ title, path, date, country })).reverse(),
 )
 
 const stampsAt = computed(() => {
@@ -51,7 +52,7 @@ const stampsAt = computed(() => {
 
       <div class="about__main">
         <section class="block">
-          <ContentRenderer v-if="page" :value="page" class="prose bio" />
+          <ContentBody v-if="page" :body="page.body" class="prose bio" />
         </section>
 
         <section class="block" aria-labelledby="names-title">

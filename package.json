@@ -10,32 +10,28 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@comark/vue": "^0.9.2",
     "@fontsource-variable/geist": "^5.3.0",
     "@fontsource-variable/geist-mono": "^5.3.0",
     "@fontsource/bebas-neue": "^5.3.0",
     "@fontsource/space-mono": "^5.3.0",
-    "@nuxt/content": "^3.17.0",
+    "@shikijs/langs": "^4.6.0",
+    "@shikijs/themes": "^4.6.0",
     "@ui-sdk/core": "0.1.0-beta.13",
     "@ui-sdk/vue": "0.1.0-beta.13",
+    "@vite-hub/content": "0.3.1",
     "circle-flags": "^2.8.3",
+    "comark": "0.9.2",
     "simple-icons": "^16.38.0",
+    "vite-hub": "^0.3.1",
     "vue": "^3.5.46",
     "zod": "^4.6.7"
   },
   "devDependencies": {
     "@nuxt/image": "^2.2.1",
     "@nuxtjs/seo": "^6.0.1",
-    "nuxt": "^4.6.4",
+    "nuxt": "npm:nuxt-nightly@5.0.0-2611192005-90d717d",
     "wrangler": "^4.166.0"
   },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@parcel/watcher",
-      "better-sqlite3",
-      "esbuild",
-      "sharp",
-      "vue-demi",
-      "workerd"
-    ]
-  }
+  "packageManager": "pnpm@12.18.0"
 }

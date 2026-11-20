@@ -1,16 +1,12 @@
 <script setup lang="ts">
 import { brands, openSource, person, socials } from '~/data/site'
 
-const { data: headline } = await useAsyncData('headline', () => queryCollection('content').path('/headline').first())
-const { data: posts } = await useAsyncData('home-posts', () =>
-  queryCollection('blog').order('date', 'DESC').limit(3).all(),
+const { data: headline } = await useAsyncData('headline', () => $fetch('/api/site/pages/headline'))
+const { data: posts } = await useAsyncData('home-posts', async () => (await $fetch('/api/site/blog')).slice(0, 3))
+const { data: notes } = await useAsyncData('home-notes', async () =>
+  (await $fetch('/api/site/notes', { query: { body: '1' } })).slice(0, 4),
 )
-const { data: notes } = await useAsyncData('home-notes', () =>
-  queryCollection('notes').order('stem', 'ASC').limit(4).all(),
-)
-const { data: places } = await useAsyncData('home-places', () =>
-  queryCollection('places').order('date', 'DESC').limit(3).all(),
-)
+const { data: places } = await useAsyncData('home-places', async () => (await $fetch('/api/site/places')).slice(0, 3))
 
 // Fetched in the browser so the prerendered page still shows current counts
 const { data: stars } = useLazyFetch('/api/stars', { server: false, cache: 'no-cache', default: () => ({}) })
@@ -51,7 +47,7 @@ useSeoMeta({
       <template #aside>
         <NuxtLink to="/about" class="link">More about me</NuxtLink>
       </template>
-      <ContentRenderer v-if="headline" :value="headline" class="lede" />
+      <ContentBody v-if="headline" :body="headline.body" class="lede" />
     </SectionBlock>
 
     <LatelyRow />

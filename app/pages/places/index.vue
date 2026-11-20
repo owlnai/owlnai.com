@@ -1,7 +1,5 @@
 <script setup lang="ts">
-const { data: places } = await useAsyncData('places-index', () =>
-  queryCollection('places').order('date', 'DESC').all(),
-)
+const { data: places } = await useAsyncData('places-index', () => $fetch('/api/site/places'))
 
 useSeoMeta({
   title: 'Places',

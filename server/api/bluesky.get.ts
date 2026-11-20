@@ -1,3 +1,7 @@
+import { defineEventHandler } from 'nuxt/server'
+import { defineCachedFunction } from 'vite-hub/cache'
+import { fetchJson } from '../utils/fetch-json'
+
 interface FeedItem {
   reason?: unknown
   post: { uri: string; record: { text?: string; createdAt?: string } }
@@ -5,25 +9,29 @@ interface FeedItem {
 
 const handle = 'owlnai.com'
 
-export default defineCachedEventHandler(
+// Cached in Workers KV for 15 minutes. If Bluesky fails after that, the last post is served for up to a week.
+const getLatestPost = defineCachedFunction(
   async () => {
-    try {
-      const { feed } = await $fetch<{ feed: FeedItem[] }>(
-        'https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed',
-        { query: { actor: handle, limit: 10, filter: 'posts_no_replies' }, signal: AbortSignal.timeout(8000) },
-      )
-      const own = feed.find((item) => !item.reason && item.post.record.text)
-      if (!own) return { post: null }
-      return {
-        post: {
-          text: own.post.record.text ?? '',
-          createdAt: own.post.record.createdAt ?? null,
-          url: `https://bsky.app/profile/${handle}/post/${own.post.uri.split('/').pop()}`,
-        },
-      }
-    } catch {
-      return { post: null }
+    const url = new URL('https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed')
+    url.search = new URLSearchParams({ actor: handle, limit: '10', filter: 'posts_no_replies' }).toString()
+    const { feed } = await fetchJson<{ feed: FeedItem[] }>(url, { timeout: 8000 })
+    const own = feed.find((item) => !item.reason && item.post.record.text)
+    if (!own) return { post: null }
+    return {
+      post: {
+        text: own.post.record.text ?? '',
+        createdAt: own.post.record.createdAt ?? null,
+        url: `https://bsky.app/profile/${handle}/post/${own.post.uri.split('/').pop()}`,
+      },
     }
   },
-  { maxAge: 60 * 15, swr: true, name: 'bluesky-latest' },
+  { maxAge: 60 * 15, swr: true, staleIfError: 60 * 60 * 24 * 7, name: 'bluesky-latest', getKey: () => handle },
 )
+
+export default defineEventHandler(async () => {
+  try {
+    return await getLatestPost()
+  } catch {
+    return { post: null }
+  }
+})

@@ -5,6 +5,7 @@
 .nitro
 .cache
 .wrangler
+.vitehub
 dist
 
 # Node dependencies

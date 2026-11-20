@@ -1,21 +1,24 @@
 <script setup lang="ts">
 const route = useRoute()
 const { data: post } = await useAsyncData(`blog-${route.params.slug}`, () =>
-  queryCollection('blog').path(`/blog/${route.params.slug}`).first(),
+  $fetch(`/api/site/blog/${route.params.slug}`).catch(() => null),
 )
 
 if (!post.value) {
   throw createError({ status: 404, statusText: 'Post not found', fatal: true })
 }
 
-// Ordered newest first, so the item before this one is the newer post
-const { data: neighbours } = await useAsyncData(`blog-${route.params.slug}-neighbours`, () =>
-  queryCollectionItemSurroundings('blog', route.path, { fields: ['title', 'path'] }).order('date', 'DESC'),
-)
-const newer = computed(() => neighbours.value?.[0] ?? null)
-const older = computed(() => neighbours.value?.[1] ?? null)
+// The list is newest first, so the post before this one is the newer post
+const { data: neighbours } = await useAsyncData(`blog-${route.params.slug}-neighbours`, async () => {
+  const posts = await $fetch('/api/site/blog')
+  const index = posts.findIndex((item) => item.path === route.path)
+  const pick = (item?: (typeof posts)[number]) => (item ? { title: item.title, path: item.path } : null)
+  return { newer: pick(posts[index - 1]), older: pick(posts[index + 1]) }
+})
+const newer = computed(() => neighbours.value?.newer ?? null)
+const older = computed(() => neighbours.value?.older ?? null)
 
-const sections = computed(() => post.value?.body?.toc?.links ?? [])
+const sections = computed(() => post.value?.body.toc ?? [])
 
 const copy = ref<HTMLElement>()
 const activeId = ref<string>()
@@ -90,7 +93,7 @@ if (post.value.canonical) {
       </div>
 
       <div ref="copy" class="body__copy">
-        <ContentRenderer :value="post" class="prose" />
+        <ContentBody :body="post.body" class="prose" />
         <p v-if="post.canonical" class="origin">
           First published on <a :href="post.canonical" class="link">DEV</a>.
         </p>

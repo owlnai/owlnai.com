@@ -3,7 +3,7 @@ import { flags } from '~/data/flags'
 
 const route = useRoute()
 const { data: place } = await useAsyncData(`place-${route.params.slug}`, () =>
-  queryCollection('places').path(`/places/${route.params.slug}`).first(),
+  $fetch(`/api/site/places/${route.params.slug}`).catch(() => null),
 )
 
 if (!place.value) {
@@ -41,7 +41,7 @@ useSeoMeta({
         <NuxtLink to="/places" class="link">All places</NuxtLink>
       </div>
       <div class="body__copy">
-        <ContentRenderer :value="place" class="prose prose--photos" />
+        <ContentBody :body="place.body" class="prose prose--photos" />
       </div>
     </div>
   </article>

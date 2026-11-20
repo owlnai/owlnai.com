@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { PlacesCollectionItem } from '@nuxt/content'
+import type { Place } from '#shared/content'
 import { home } from '~/data/site'
 import { worldDots } from '~/data/world-dots'
 
 // A dotted map framed around the places visited: land as a grid of dots, a holographic pin for each place
 // and an arc to it from home. Pins are links. Hovering a pin or its card (via `active`) lights up both.
 const props = withDefaults(
-  defineProps<{ places: PlacesCollectionItem[]; active?: string | null; aspect?: number }>(),
+  defineProps<{ places: Place[]; active?: string | null; aspect?: number }>(),
   { active: null, aspect: 2 },
 )
 const emit = defineEmits<{ hover: [path: string | null] }>()

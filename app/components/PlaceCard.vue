@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { PlacesCollectionItem } from '@nuxt/content'
+import type { Place } from '#shared/content'
 import { flags } from '~/data/flags'
 
 // `memory` adds the post's one-line description under the title; `active` shows the hover state when the
 // place is highlighted from elsewhere, like its pin on the map.
-const props = defineProps<{ place: PlacesCollectionItem; memory?: boolean; active?: boolean }>()
+const props = defineProps<{ place: Place; memory?: boolean; active?: boolean }>()
 
 const flag = computed(() => (props.place.country ? flags[props.place.country] : undefined))
 </script>

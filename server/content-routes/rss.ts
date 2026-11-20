@@ -1,3 +1,7 @@
+import { defineEventHandler } from 'nuxt/server'
+import { listEntries } from '../utils/site-content'
+
+// GET /rss.xml, prerendered. Registered in nuxt.config.ts for dev and prerender only.
 const site = 'https://owlnai.com'
 
 function escapeXml(value: string) {
@@ -8,8 +12,9 @@ function escapeXml(value: string) {
     .replaceAll('"', '&quot;')
 }
 
-export default defineEventHandler(async (event) => {
-  const posts = await queryCollection(event, 'blog').order('date', 'DESC').all()
+export default defineEventHandler(async () => {
+  // Newest first
+  const posts = await listEntries('blog')
 
   const items = posts
     .map(
@@ -23,8 +28,7 @@ export default defineEventHandler(async (event) => {
     )
     .join('\n')
 
-  setHeader(event, 'content-type', 'application/rss+xml; charset=utf-8')
-  return `<?xml version="1.0" encoding="UTF-8"?>
+  const body = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Unai Mengual</title>
@@ -36,4 +40,5 @@ ${items}
   </channel>
 </rss>
 `
+  return new Response(body, { headers: { 'content-type': 'application/rss+xml; charset=utf-8' } })
 })

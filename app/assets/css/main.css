@@ -342,6 +342,11 @@ button {
   tab-size: 2;
 }
 
+/* Comark writes each code line as an inline span; a block <code> keeps the line height at the <pre>'s 1.6 */
+.prose pre > code {
+  display: block;
+}
+
 /* Syntax colours follow the page's colour scheme instead of a .dark class */
 :root .shiki span {
   color: light-dark(var(--shiki-default), var(--shiki-dark));

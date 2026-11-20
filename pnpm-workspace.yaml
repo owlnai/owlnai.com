@@ -1,0 +1,29 @@
+# pnpm 11+ reads its settings from here, not from .npmrc or the "pnpm" field in package.json
+shamefullyHoist: true
+
+# Nuxt 5 nightly everywhere. Without these, modules that list `nuxt` as a peer get Nuxt 4.6 installed next to it.
+overrides:
+  nuxt: npm:nuxt-nightly@5.0.0-2611192005-90d717d
+  '@nuxt/kit': npm:@nuxt/kit-nightly@5.0.0-2611192005-90d717d
+  '@nuxt/schema': npm:@nuxt/schema-nightly@5.0.0-2611192005-90d717d
+
+# Packages allowed to run install scripts
+allowBuilds:
+  esbuild: true
+  sharp: true
+  workerd: true
+
+minimumReleaseAgeExclude:
+  - '@cloudflare/workers-utils@0.56.0'
+  - '@vue/compiler-core@3.5.46'
+  - '@vue/compiler-dom@3.5.46'
+  - '@vue/compiler-sfc@3.5.46'
+  - '@vue/compiler-ssr@3.5.46'
+  - '@vue/reactivity@3.5.46'
+  - '@vue/runtime-core@3.5.46'
+  - '@vue/runtime-dom@3.5.46'
+  - '@vue/server-renderer@3.5.46'
+  - '@vue/shared@3.5.46'
+  - miniflare@5.20261119.0-beta
+  - vue@3.5.46
+  - wrangler@4.166.0

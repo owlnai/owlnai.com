@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { NotesCollectionItem } from '@nuxt/content'
+import type { Note } from '#shared/content'
 
-defineProps<{ note: NotesCollectionItem }>()
+defineProps<{ note: Note }>()
 </script>
 
 <template>
   <article class="note" :data-kind="note.kind">
-    <ContentRenderer :value="note" class="note__body" />
+    <ContentBody :body="note.body" class="note__body" />
     <p v-if="note.kind === 'code' && note.caption" class="note__caption">{{ note.caption }}</p>
     <p v-if="note.kind === 'quote' && note.author" class="note__source">
       <a v-if="note.url" :href="note.url" class="link">{{ note.author }}</a>
