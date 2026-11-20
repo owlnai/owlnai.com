@@ -15,8 +15,20 @@ const flag = computed(() => (place.value?.country ? flags[place.value.country] :
 useSeoMeta({
   title: place.value.title,
   description: place.value.description,
-  ogImage: place.value.cover,
 })
+// The cover photo with the place's name over it, as JPEG: a photo card is several times smaller than as PNG,
+// and WhatsApp skips preview images much over 300 KB
+defineOgImage(
+  'Site',
+  {
+    title: place.value.title,
+    description: place.value.description,
+    label: 'Place',
+    date: longDate(place.value.date),
+    image: place.value.cover,
+  },
+  { extension: 'jpeg' },
+)
 </script>
 
 <template>

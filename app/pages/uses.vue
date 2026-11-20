@@ -5,6 +5,7 @@ useSeoMeta({
   title: 'Uses',
   description: 'The software and hardware Unai Mengual uses day to day.',
 })
+defineOgImage('Site', { title: 'Uses.', description: 'The software and hardware I use day to day.', label: 'Uses' })
 </script>
 
 <template>

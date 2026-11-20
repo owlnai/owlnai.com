@@ -18,6 +18,11 @@ useSeoMeta({
   description:
     'Unai Mengual, owlnai online. Full-stack developer in Spain, founder of the web design studio sector9 and of Songbird Labs, Roblox tools that empower creators.',
 })
+defineOgImage('Site', {
+  title: 'Unai Mengual',
+  description: 'Full-stack developer in Spain. Nuxt, Vue, open source and a soft spot for wikis.',
+  label: 'owlnai',
+})
 </script>
 
 <template>

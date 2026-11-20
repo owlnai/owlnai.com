@@ -43,7 +43,19 @@ onMounted(() => {
 
 onBeforeUnmount(() => observer?.disconnect())
 
-useSeoMeta({ title: post.value.title, description: post.value.description })
+useSeoMeta({
+  title: post.value.title,
+  description: post.value.description,
+  ogType: 'article',
+  articlePublishedTime: post.value.date,
+  articleAuthor: ['Unai Mengual'],
+})
+defineOgImage('Site', {
+  title: post.value.title,
+  description: post.value.description,
+  label: 'Blog',
+  date: longDate(post.value.date),
+})
 
 if (post.value.canonical) {
   useHead({ link: [{ rel: 'canonical', href: post.value.canonical }] })

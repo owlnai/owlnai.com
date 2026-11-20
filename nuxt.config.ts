@@ -59,8 +59,9 @@ export default defineNuxtConfig({
   },
   // Every sitemap URL is known at build time, so write sitemap.xml as a file instead of a Worker route
   sitemap: { zeroRuntime: true },
-  // No OG image renderer is installed; this also stops the module copying its fonts into the build
-  ogImage: { enabled: false },
+  // Share images, rendered by Takumi from app/components/OgImage/ while pages prerender. Zero runtime keeps the
+  // renderer out of the Worker, which serves them as static PNGs; prerendered images need no signing secret.
+  ogImage: { zeroRuntime: true },
   // Bundled with @nuxtjs/seo v6. It registers a service worker and polls for new builds,
   // and its store of old assets lives in node_modules/.cache, which Workers Builds does not keep
   skewProtection: false,

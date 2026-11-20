@@ -9,6 +9,11 @@ useSeoMeta({
   description:
     'About Unai Mengual, also known as owlnai. Full-stack developer at MRM in Spain, founder of the web design studio sector9 and of Songbird Labs.',
 })
+defineOgImage('Site', {
+  title: 'Hey! I’m Unai, from Spain.',
+  description: 'Full-stack developer at MRM, founder of the web design studio sector9 and of Songbird Labs.',
+  label: 'About',
+})
 
 // Where each journey step sits, as % across. Left and right alternate, a little uneven so it reads hand-placed.
 const lanes = [41, 59, 43, 57, 40, 60, 44, 56]
