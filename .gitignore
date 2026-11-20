@@ -13,6 +13,9 @@ node_modules
 logs
 *.log
 
+# Full-size photo originals; resized copies live in public/
+.originals
+
 # Misc
 .DS_Store
 .fleet

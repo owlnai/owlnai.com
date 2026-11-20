@@ -31,7 +31,7 @@ useSeoMeta({
     </PageIntro>
 
     <figure v-if="place.cover" class="cover">
-      <img :src="place.cover" :alt="`${place.title}, cover photo`" />
+      <img :src="place.cover" :alt="place.coverAlt ?? `${place.title}, cover photo`" />
     </figure>
 
     <div class="body">

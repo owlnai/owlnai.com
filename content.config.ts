@@ -34,6 +34,7 @@ export default defineContentConfig({
         date: z.string(),
         country: z.string().optional(),
         cover: z.string().optional(),
+        coverAlt: z.string().optional(),
       }),
     }),
   },
