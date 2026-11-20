@@ -102,13 +102,6 @@ export const openSource: OpenSourceItem[] = [
     href: 'https://github.com/owlnai/isnuxt3ready',
   },
   {
-    id: 'nuxt',
-    name: 'nuxt/nuxt',
-    summary: 'The full-stack Vue framework',
-    href: 'https://github.com/nuxt/nuxt',
-    avatar: 'https://github.com/nuxt.png?size=96',
-  },
-  {
     id: 'slidev',
     name: 'slidevjs/docs-es',
     summary: 'Slidev docs, in Spanish',
@@ -116,25 +109,11 @@ export const openSource: OpenSourceItem[] = [
     avatar: 'https://github.com/slidevjs.png?size=96',
   },
   {
-    id: 'wikioasis',
-    name: 'WikiOasis',
-    summary: 'A space for anybody to write about anything',
-    href: 'https://github.com/WikiOasis',
-    avatar: 'https://github.com/WikiOasis.png?size=96',
-  },
-  {
     id: 'afordin',
     name: 'Afordin',
     summary: 'A Spanish-speaking programming community',
     href: 'https://github.com/Afordin',
     avatar: 'https://github.com/Afordin.png?size=96',
-  },
-  {
-    id: 'taekwondo',
-    name: 'Tekwondo-RAM/taekwondo-app',
-    summary: 'A taekwondo PWA',
-    href: 'https://github.com/Tekwondo-RAM/taekwondo-app',
-    avatar: 'https://github.com/Tekwondo-RAM.png?size=96',
   },
 ]
 

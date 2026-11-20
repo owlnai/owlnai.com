@@ -20,7 +20,7 @@ useSeoMeta({
   title: 'Unai Mengual',
   titleTemplate: '%s · owlnai',
   description:
-    'Unai Mengual, owlnai online. Tech lead in Spain, founder of the web design studio sector9 and of Songbird Labs, Roblox tools that empower creators.',
+    'Unai Mengual, owlnai online. Full-stack developer in Spain, founder of the web design studio sector9 and of Songbird Labs, Roblox tools that empower creators.',
 })
 </script>
 
@@ -29,7 +29,7 @@ useSeoMeta({
     <section class="hero">
       <div class="hero__text">
         <p class="hero__statement">
-          I'm a tech lead at
+          I'm a full-stack developer at
           <a :href="brands.mrm.href" class="chip"
             ><img :src="brands.mrm.logo" alt="" class="chip__logo" />{{ brands.mrm.name }}</a
           >. I build for the web as
@@ -139,15 +139,15 @@ useSeoMeta({
 <style scoped>
 .hero {
   display: grid;
-  min-height: min(28rem, calc(100svh - 3.5rem));
+  min-height: min(36rem, calc(100svh - 3.5rem));
 }
 
 .hero__text {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 3rem;
-  padding: clamp(2rem, 4.5vw, 3.5rem) var(--gutter) clamp(2rem, 4vw, 3rem);
+  gap: 5rem;
+  padding: clamp(3.25rem, 7.5vw, 6rem) var(--gutter) clamp(2rem, 4vw, 3rem);
 }
 
 .hero__statement {
@@ -239,7 +239,9 @@ useSeoMeta({
 .orgs__link {
   display: grid;
   grid-template-columns: 1.75rem minmax(0, 1fr) auto;
-  gap: 0.1rem 0.75rem;
+  /* Rows hug the top, so icons, names and summaries line up across tiles of different heights */
+  align-content: start;
+  gap: 0.35rem 0.75rem;
   align-items: center;
   height: 100%;
   padding: var(--space-row) var(--gutter);
@@ -250,8 +252,9 @@ useSeoMeta({
   background: var(--sunken);
 }
 
+/* Level with the name; the summary runs on underneath it */
 .orgs__avatar {
-  grid-row: span 2;
+  grid-row: 1;
   display: grid;
   place-items: center;
   width: 1.75rem;
@@ -415,7 +418,7 @@ useSeoMeta({
   }
 
   .hero__text {
-    gap: 2.5rem;
+    gap: 4rem;
   }
 
   .cards--places,
