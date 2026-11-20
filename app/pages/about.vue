@@ -42,7 +42,7 @@ const stampsAt = computed(() => {
       <span class="cross" data-at="tr" />
 
       <!-- An all-access pass on a lanyard: photo, name and where to find me -->
-      <ContactTicket class="infobox" />
+      <ContactTicket id="contact" class="infobox" />
 
       <div class="about__main">
         <section class="block">
@@ -82,7 +82,8 @@ const stampsAt = computed(() => {
       <!--
         A path that wanders from step to step. Each step sits in a lane (--lane, % across) with its text on the
         outer side; the curve to the next step runs through the open middle, so it never crosses any text.
-        It fades in from the past and trails off past "now".
+        Steps group into chapters, with more room between them. The path fades in from the past, draws itself
+        as you scroll, and carries on past "now" to an open dot.
       -->
       <Timeline aria-labelledby="journey-title" class="journey">
         <TimelineItem
@@ -92,8 +93,10 @@ const stampsAt = computed(() => {
           class="journey__step"
           :data-side="laneAt(index) < 50 ? 'left' : 'right'"
           :data-turn="nextLaneAt(index) < laneAt(index) ? 'left' : 'right'"
+          :data-before-chapter="milestones[index + 1]?.chapter ? '' : undefined"
           :style="{ '--lane': laneAt(index), '--lane-next': nextLaneAt(index) }"
         >
+          <h3 v-if="item.chapter" class="journey__chapter display">{{ item.chapter }}</h3>
           <TimelineMarker class="journey__marker" />
           <TimelineConnector class="journey__connector">
             <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
@@ -121,6 +124,15 @@ const stampsAt = computed(() => {
           </div>
         </TimelineItem>
       </Timeline>
+      <!-- Past "now" the path keeps going to an open dot: whatever comes next, which points back to the ticket -->
+      <div
+        class="journey journey--next"
+        :data-side="laneAt(milestones.length - 1) < 50 ? 'left' : 'right'"
+        :style="{ '--lane': laneAt(milestones.length - 1) }"
+      >
+        <span class="journey__open" aria-hidden="true" />
+        <a href="#contact" class="journey__next display">What’s next? <span>Say hi</span> ↑</a>
+      </div>
     </SectionBlock>
   </article>
 </template>
@@ -266,9 +278,10 @@ a.entry:hover .entry__arrow {
   --gap: 1.25rem;
   --dot: 11px;
   --dot-top: 0.8rem;
-  --path: repeating-linear-gradient(to bottom, var(--line-strong) 0 3px, transparent 3px 7px);
+  --path-color: var(--ink-faint);
+  --path: repeating-linear-gradient(to bottom, var(--path-color) 0 4px, transparent 4px 8px);
   position: relative;
-  padding: 5.5rem var(--gutter) 5rem;
+  padding: 18rem var(--gutter) 0;
 }
 
 .journey__step {
@@ -281,8 +294,32 @@ a.entry:hover .entry__arrow {
   /* Puts the centre of the dot column exactly at --x */
   grid-template-columns: calc(var(--x) - var(--rail) / 2 - var(--gap)) var(--rail) minmax(0, 1fr);
   column-gap: var(--gap);
-  padding-bottom: 7rem;
+  padding-bottom: 5.5rem;
   outline-offset: 6px;
+}
+
+/* Steps in the same chapter sit closer; a new chapter gets room for its heading */
+.journey__step[data-before-chapter] {
+  padding-bottom: 12rem;
+}
+
+/* A chapter heading hangs above its first step, on the text side, in the room left before it */
+.journey__chapter {
+  position: absolute;
+  bottom: calc(100% + 3rem);
+  left: calc(var(--x) + var(--rail) / 2 + var(--gap));
+  max-width: 22rem;
+  color: var(--ink);
+  font-size: clamp(1.75rem, 3.2vw, 2.5rem);
+  letter-spacing: -0.045em;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+.journey__step[data-side='left'] .journey__chapter {
+  right: calc(100% - var(--x) + var(--rail) / 2 + var(--gap));
+  left: auto;
+  text-align: end;
 }
 
 .journey__text {
@@ -332,9 +369,9 @@ a.entry:hover .entry__arrow {
   content: '';
   position: absolute;
   bottom: calc(100% - var(--dot-top) + 4px);
-  left: calc(var(--x) - 0.5px);
-  width: 1px;
-  height: 4.5rem;
+  left: calc(var(--x) - 0.75px);
+  width: 1.5px;
+  height: 10rem;
   background: var(--path);
   mask-image: linear-gradient(transparent, #000);
 }
@@ -406,28 +443,139 @@ a.entry:hover .entry__arrow {
 
 .journey__connector path {
   fill: none;
-  stroke: var(--line-strong);
-  stroke-dasharray: 3 4;
-  stroke-width: 1.25;
+  stroke: var(--path-color);
+  stroke-dasharray: 4 4;
+  stroke-width: 1.5;
   vector-effect: non-scaling-stroke;
 }
 
-/* After "now" the path carries straight on, fading out */
+/* After "now" the path carries straight on, down to the open dot of what's next */
 .journey__step[data-current] {
   padding-bottom: 0;
 }
 
 .journey__step[data-current] .journey__connector {
-  bottom: auto;
-  left: calc(var(--x) - 0.5px);
-  width: 1px;
-  height: 4.5rem;
+  /* Ends just above the open dot: the next block's top padding, plus half its row, less half the dot */
+  bottom: calc(var(--dot) / 2 + 4px - var(--next-gap) - var(--next-row) / 2);
+  left: calc(var(--x) - 0.75px);
+  width: 1.5px;
   background: var(--path);
-  mask-image: linear-gradient(#000, transparent);
 }
 
 .journey__step[data-current] .journey__connector svg {
   display: none;
+}
+
+/* What's next: an open, dashed dot on the same lane, a line pointing back up to the ticket, then the path fades */
+.journey--next {
+  --x: calc(var(--lane) * 1%);
+  display: grid;
+  grid-template-columns: calc(var(--x) - var(--rail) / 2 - var(--gap)) var(--rail) minmax(0, 1fr);
+  grid-template-rows: var(--next-row);
+  align-items: center;
+  column-gap: var(--gap);
+  padding-top: var(--next-gap);
+  padding-bottom: 7rem;
+}
+
+.journey,
+.journey--next {
+  --next-gap: 3.5rem;
+  --next-row: 1.75rem;
+}
+
+.journey__open {
+  position: relative;
+  grid-row: 1;
+  grid-column: 2;
+  justify-self: center;
+  width: var(--dot);
+  height: var(--dot);
+  border: 1.5px dashed var(--ink-faint);
+  border-radius: 50%;
+}
+
+.journey__open::after {
+  content: '';
+  position: absolute;
+  top: calc(100% + 4px);
+  left: calc(50% - 0.75px);
+  width: 1.5px;
+  height: 4rem;
+  background: var(--path);
+  mask-image: linear-gradient(#000, transparent);
+}
+
+.journey__next {
+  grid-row: 1;
+  grid-column: 3;
+  justify-self: start;
+  color: var(--ink-soft);
+  font-size: 1.375rem;
+  letter-spacing: -0.03em;
+  line-height: var(--next-row);
+  white-space: nowrap;
+  transition: color 0.2s;
+}
+
+.journey--next[data-side='left'] .journey__next {
+  grid-column: 1;
+  justify-self: end;
+}
+
+.journey__next span {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--line-strong);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  transition: text-decoration-color 0.2s;
+}
+
+.journey__next:hover span {
+  text-decoration-color: currentColor;
+}
+
+/*
+ * Where the browser supports scroll-driven animation, the path draws itself downward as you read and each dot
+ * fills in once the line reaches it. Without support, or with reduced motion, everything is simply there.
+ */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /*
+     * The timeline only sees the top 55% of the screen (a 45% inset at the bottom), so "entering" means crossing
+     * a reading line a little below the middle: the line draws as it passes that point, not as it scrolls in.
+     */
+    .journey__connector {
+      animation: journey-draw linear both;
+      animation-timeline: view(block 0% 45%);
+      animation-range: entry 0% entry 100%;
+    }
+
+    .journey__step:not([data-current]) .journey__marker {
+      animation: journey-reach linear both;
+      animation-timeline: view(block 0% 45%);
+      animation-range: entry 0% entry 100%;
+    }
+  }
+}
+
+@keyframes journey-draw {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+
+@keyframes journey-reach {
+  from {
+    background: var(--paper);
+  }
+  to {
+    background: var(--ink-faint);
+  }
 }
 
 .journey__title {
@@ -506,7 +654,7 @@ a.entry:hover .entry__arrow {
   .journey {
     --gap: 1rem;
     --dot-top: 0.4rem;
-    padding-block: 3.5rem;
+    padding-top: 9rem;
   }
 
   .journey__step {
@@ -514,6 +662,37 @@ a.entry:hover .entry__arrow {
     --x-next: var(--x);
     grid-template-columns: var(--rail) minmax(0, 1fr);
     padding-bottom: 3.5rem;
+  }
+
+  .journey__step[data-before-chapter] {
+    padding-bottom: 8rem;
+  }
+
+  .journey__chapter,
+  .journey__step[data-side='left'] .journey__chapter {
+    right: auto;
+    bottom: calc(100% + 2rem);
+    left: calc(var(--rail) + var(--gap));
+    font-size: 1.75rem;
+    text-align: start;
+  }
+
+  .journey--next {
+    --x: calc(var(--rail) / 2);
+    grid-template-columns: var(--rail) minmax(0, 1fr);
+    padding-top: var(--next-gap);
+    padding-bottom: 5rem;
+  }
+
+  .journey__open {
+    grid-column: 1;
+  }
+
+  .journey__next,
+  .journey--next[data-side='left'] .journey__next {
+    grid-column: 2;
+    justify-self: start;
+    font-size: 1.125rem;
   }
 
   .journey__marker {
@@ -533,8 +712,8 @@ a.entry:hover .entry__arrow {
   }
 
   .journey__connector {
-    left: calc(var(--x) - 0.5px);
-    width: 1px;
+    left: calc(var(--x) - 0.75px);
+    width: 1.5px;
     background: var(--path);
   }
 

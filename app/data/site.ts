@@ -159,6 +159,8 @@ export interface Milestone {
   dateTime?: string
   title: string
   description: string
+  // Set on the first step of a chapter; the journey shows it as a heading and leaves more room before it
+  chapter?: string
   // A small illustration beside the step (app/components/journey/). Places add travel stamps on their own.
   widget?: 'contributions' | 'design' | 'here'
 }
@@ -168,6 +170,7 @@ export interface Milestone {
 export const milestones: Milestone[] = [
   {
     year: 'Before',
+    chapter: 'Learning in the open',
     title: 'Curiosity',
     description: 'Editing wikis as a teenager and building my first web pages by hand. Sharing what I knew felt natural.',
   },
@@ -187,6 +190,7 @@ export const milestones: Milestone[] = [
   {
     year: '2022',
     dateTime: '2022',
+    chapter: 'Finding my craft',
     title: 'Finding design',
     description:
       'Inspired by a creative friend, I went deep into UI design, and made small experiments just to see how far an idea could go.',
@@ -208,6 +212,7 @@ export const milestones: Milestone[] = [
   {
     year: '2025',
     dateTime: '2025',
+    chapter: 'Building my own',
     title: 'A studio of my own',
     description: 'Started a small web design studio.',
   },
