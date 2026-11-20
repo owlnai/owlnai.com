@@ -3,13 +3,13 @@
 const options = { server: false, cache: 'no-cache' } as const
 const github = useLazyFetch('/api/github', options)
 const bluesky = useLazyFetch('/api/bluesky', options)
-const lastfm = useLazyFetch('/api/lastfm', options)
+// Shared with the header island and kept fresh while the page is open
+const { track, playing } = useNowPlaying()
 
 const isLoading = (status: string) => status === 'idle' || status === 'pending'
 
 const repo = computed(() => github.data.value?.latest ?? null)
 const post = computed(() => bluesky.data.value?.post ?? null)
-const track = computed(() => lastfm.data.value?.track ?? null)
 
 const excerpt = computed(() => {
   const text = post.value?.text ?? ''
@@ -22,13 +22,16 @@ const showPost = computed(() => isLoading(bluesky.status.value) || post.value)
 
 <template>
   <section v-if="showRepo || showPost || track" class="lately" aria-label="Lately">
-    <a v-if="track" :href="track.url" class="lately__cell">
+    <a v-if="track" :href="track.url" class="lately__cell lately__cell--music">
+      <MusicCover :src="track.cover?.large" class="lately__cover" />
       <span class="lately__lead">
-        <span v-if="track.nowPlaying" class="lately__dot" aria-hidden="true" />
-        {{ track.nowPlaying ? 'Listening to' : 'Last played' }}
+        <MusicBars v-if="playing" playing class="lately__bars" />
+        {{ playing ? 'Listening to' : 'Last played' }}
       </span>
       <span class="lately__main display">{{ track.name }}</span>
-      <span class="lately__tail">by {{ track.artist }}</span>
+      <span class="lately__tail">
+        by {{ track.artist }}<template v-if="!playing && track.playedAt"> · {{ timeAgo(track.playedAt) }}</template>
+      </span>
     </a>
 
     <component :is="repo ? 'a' : 'div'" v-if="showRepo" :href="repo?.url" class="lately__cell">
@@ -84,14 +87,27 @@ a.lately__cell:hover {
   min-height: 1.4em;
 }
 
-.lately__dot {
-  display: inline-block;
-  width: 0.4rem;
-  height: 0.4rem;
-  margin-inline-end: 0.4rem;
-  border-radius: 50%;
-  background: var(--accent);
-  vertical-align: 0.08em;
+/* The cover sits in the top corner; the lead and title keep clear of it */
+.lately__cell--music {
+  position: relative;
+}
+
+.lately__cover {
+  position: absolute;
+  top: var(--space-tile);
+  right: var(--gutter);
+  width: 4rem;
+  border-radius: 0.6rem;
+}
+
+.lately__cell--music .lately__lead,
+.lately__cell--music .lately__main {
+  padding-inline-end: 5rem;
+}
+
+.lately__bars {
+  margin-inline-end: 0.3rem;
+  vertical-align: -0.05em;
 }
 
 .lately__main {

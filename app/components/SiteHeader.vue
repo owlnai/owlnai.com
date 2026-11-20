@@ -38,10 +38,14 @@ watch(active, () => nextTick(measure))
 
 <template>
   <header class="header">
-    <NuxtLink to="/" class="pill glass mark" aria-label="owlnai, home">
-      <img src="/icon.png" alt="" width="28" height="28" class="mark__avatar" />
-      owlnai
-    </NuxtLink>
+    <!-- Who: my name, and what I'm listening to when something is playing -->
+    <div class="pill glass mark">
+      <NuxtLink to="/" class="mark__home" aria-label="owlnai, home">
+        <img src="/icon.png" alt="" width="28" height="28" class="mark__avatar" />
+        owlnai
+      </NuxtLink>
+      <MusicIsland />
+    </div>
 
     <nav
       ref="nav"
@@ -94,9 +98,17 @@ watch(active, () => nextTick(measure))
 }
 
 .mark {
+  position: relative;
   justify-self: start;
+}
+
+.mark__home {
+  display: inline-flex;
+  align-items: center;
+  align-self: stretch;
   gap: 0.55rem;
   padding: 0 0.95rem 0 0.3rem;
+  border-radius: 999px;
   font-size: 1.0625rem;
   font-weight: 650;
   letter-spacing: -0.05em;
