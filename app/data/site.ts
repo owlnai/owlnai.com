@@ -66,14 +66,6 @@ export const community: CommunityItem[] = [
   },
 ]
 
-export const facts = [
-  { label: 'Based in', value: 'Spain' },
-  { label: 'Role', value: 'Tech lead at MRM' },
-  { label: 'Studio', value: 'sector9' },
-  { label: 'Building', value: 'Songbird Labs' },
-  { label: 'Speaks', value: 'English, Spanish' },
-]
-
 // My own projects first, then projects by others that I have contributed to
 export interface OpenSourceItem {
   id: string
@@ -161,48 +153,63 @@ export interface Milestone {
   dateTime?: string
   title: string
   description: string
+  // A small illustration beside the step (app/components/journey/). Places add travel stamps on their own.
+  widget?: 'contributions' | 'design' | 'here'
 }
 
+// The journey so far, oldest first. The last step is where I am now.
+// Phases rather than projects: the Community section and GitHub hold the specifics.
 export const milestones: Milestone[] = [
   {
-    year: '2026',
-    dateTime: '2026',
-    title: 'Back to open source',
-    description: 'A Git pane for Rex in Rust, a Homebrew tap, and a trip to MadVue to meet the community in person.',
+    year: 'Before',
+    title: 'Curiosity',
+    description: 'Editing wikis as a teenager and building my first web pages by hand. Sharing what I knew felt natural.',
+  },
+  {
+    year: '2016',
+    dateTime: '2016',
+    title: 'Learning in public',
+    description: 'Started putting my work out in the open, for anyone to see, use and improve.',
+    widget: 'contributions',
+  },
+  {
+    year: '2021',
+    dateTime: '2021',
+    title: 'Building with others',
+    description: 'Helped a community find its way through a big change, and learned the best things are built together.',
+  },
+  {
+    year: '2022',
+    dateTime: '2022',
+    title: 'Finding design',
+    description:
+      'Inspired by a creative friend, I went deep into UI design, and made small experiments just to see how far an idea could go.',
+    widget: 'design',
+  },
+  {
+    year: '2023',
+    dateTime: '2023',
+    title: 'Leading and teaching',
+    description:
+      'Became a tech lead, building for some of the world’s most recognizable brands, and ran workshops to pass on what I had learned.',
   },
   {
     year: '2024',
     dateTime: '2024',
     title: 'People, not platforms',
-    description: 'Left Twitter for Bluesky. Archived isnuxt3ready once Nuxt’s own modules directory covered it.',
+    description: 'Choosing more carefully where to spend my time, and letting things go once they had done their job.',
   },
   {
-    year: '2023',
-    dateTime: '2023',
-    title: 'Writing and workshops',
-    description: 'Wrote about future-proof UnoCSS, and ran Nuxt, UnoCSS and accessibility workshops.',
+    year: '2025',
+    dateTime: '2025',
+    title: 'A studio of my own',
+    description: 'Started a small web design studio.',
   },
   {
-    year: '2022',
-    dateTime: '2022',
-    title: 'The Nuxt Rule',
-    description: 'An experiment: if it exists, there’s a Nuxt module of it.',
-  },
-  {
-    year: '2021',
-    dateTime: '2021',
-    title: 'isnuxt3ready',
-    description: 'A compatibility guide for Nuxt 3 modules, built with the community while the ecosystem migrated.',
-  },
-  {
-    year: '2016',
-    dateTime: '2016',
-    title: 'Joined GitHub',
-    description: 'First commits in public.',
-  },
-  {
-    year: 'Before',
-    title: 'Wikis and Notepad',
-    description: 'Editing wikis as a teenager, and building simple websites in HTML with Notepad.',
+    year: '2026',
+    dateTime: '2026',
+    title: 'Building for creators',
+    description: 'Making tools that help creators build their worlds, working in the open again, and meeting the community in person.',
+    widget: 'here',
   },
 ]
