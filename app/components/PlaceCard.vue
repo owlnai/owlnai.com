@@ -55,14 +55,10 @@ const flag = computed(() => (props.place.country ? flags[props.place.country] : 
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: grayscale(1) contrast(1.04);
-  transition:
-    filter 0.4s,
-    scale 0.6s var(--ease-out);
+  transition: scale 0.6s var(--ease-out);
 }
 
 .place:hover .place__cover img {
-  filter: none;
   scale: 1.03;
 }
 

@@ -107,12 +107,6 @@ watch(active, () => nextTick(measure))
   height: 1.75rem;
   border-radius: 50%;
   object-fit: cover;
-  filter: grayscale(1) contrast(1.04);
-  transition: filter 0.3s;
-}
-
-.mark:hover .mark__avatar {
-  filter: none;
 }
 
 .nav {
