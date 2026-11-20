@@ -1,9 +1,9 @@
 ---
 title: About
-description: About Unai Mengual, also known as owlnai. Tech lead at MRM in Spain, founder of the web design studio sector9 and of Songbird Labs.
+description: About Unai Mengual, also known as owlnai. Full-stack developer at MRM in Spain, founder of the web design studio sector9 and of Songbird Labs.
 ---
 
-I'm Unai Mengual, a tech lead at MRM in Spain, where I work for some of the world's most recognizable brands. Online, I'm owlnai.
+Online, I'm owlnai. By day, I'm a full-stack developer at MRM, building for some of the world's most recognizable brands. In practice that means leading projects, helping shape their architecture and mentoring the people around me.
 
 As a teenager, I built simple websites using HTML in Notepad. My love for wikis and sharing knowledge led me to web development, where I discovered that code could make pages come alive.
 

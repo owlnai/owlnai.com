@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { flags } from '~/data/flags'
 import { community, milestones, names } from '~/data/site'
 
 const { data: page } = await useAsyncData('about', () => queryCollection('content').path('/about').first())
@@ -6,7 +7,7 @@ const { data: page } = await useAsyncData('about', () => queryCollection('conten
 useSeoMeta({
   title: 'About',
   description:
-    'About Unai Mengual, also known as owlnai. Tech lead at MRM in Spain, founder of the web design studio sector9 and of Songbird Labs.',
+    'About Unai Mengual, also known as owlnai. Full-stack developer at MRM in Spain, founder of the web design studio sector9 and of Songbird Labs.',
 })
 
 // Where each journey step sits, as % across. Left and right alternate, a little uneven so it reads hand-placed.
@@ -35,7 +36,11 @@ const stampsAt = computed(() => {
 
 <template>
   <article>
-    <PageIntro title="One person, three names." />
+    <PageIntro>
+      <template #title>
+        Hey! My name is Unai and I’m from&nbsp;Spain<img :src="flags.es!.src" alt="" width="64" height="64" class="hero-flag" />
+      </template>
+    </PageIntro>
 
     <div class="about">
       <span class="cross" data-at="tl" />
@@ -96,6 +101,8 @@ const stampsAt = computed(() => {
           :data-before-chapter="milestones[index + 1]?.chapter ? '' : undefined"
           :style="{ '--lane': laneAt(index), '--lane-next': nextLaneAt(index) }"
         >
+          <!-- Where the path begins, a solid dot that the open one at the end answers -->
+          <p v-if="index === 0" class="journey__origin display">It all started here.</p>
           <h3 v-if="item.chapter" class="journey__chapter display">{{ item.chapter }}</h3>
           <TimelineMarker class="journey__marker" />
           <TimelineConnector class="journey__connector">
@@ -138,6 +145,17 @@ const stampsAt = computed(() => {
 </template>
 
 <style scoped>
+/* The flag after "Spain", sized to the capitals and kept on the same line as the word */
+.hero-flag {
+  display: inline-block;
+  width: 0.78em;
+  height: 0.78em;
+  margin-inline-start: 0.22em;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px var(--line-strong);
+  vertical-align: -0.04em;
+}
+
 .about {
   position: relative;
   display: grid;
@@ -280,6 +298,8 @@ a.entry:hover .entry__arrow {
   --dot-top: 0.8rem;
   --path-color: var(--ink-faint);
   --path: repeating-linear-gradient(to bottom, var(--path-color) 0 4px, transparent 4px 8px);
+  /* How far the path runs from its origin down to the first step */
+  --lead: 10rem;
   position: relative;
   padding: 18rem var(--gutter) 0;
 }
@@ -364,16 +384,49 @@ a.entry:hover .entry__arrow {
   vertical-align: 0.35em;
 }
 
-/* The path fades in from before the first step */
+/* The path runs down from where it all started to the first step */
 .journey__step:first-child::before {
   content: '';
   position: absolute;
   bottom: calc(100% - var(--dot-top) + 4px);
   left: calc(var(--x) - 0.75px);
   width: 1.5px;
-  height: 10rem;
+  height: var(--lead);
   background: var(--path);
-  mask-image: linear-gradient(transparent, #000);
+}
+
+/*
+ * The origin: a solid dot at the top of that line, its words beside it on the side away from the first
+ * chapter heading. Its box is centred on the dot (translate 50%) so the line meets it like any other step.
+ */
+.journey__origin {
+  position: absolute;
+  bottom: calc(100% - var(--dot-top) + 4px + var(--lead) + 4px + var(--dot) / 2);
+  left: calc(var(--x) - var(--dot) / 2);
+  display: flex;
+  gap: calc(var(--rail) / 2 - var(--dot) / 2 + var(--gap));
+  align-items: center;
+  color: var(--ink-soft);
+  font-size: 1.375rem;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  white-space: nowrap;
+  translate: 0 50%;
+}
+
+.journey__origin::before {
+  content: '';
+  flex: none;
+  width: var(--dot);
+  height: var(--dot);
+  border-radius: 50%;
+  background: var(--ink-faint);
+}
+
+.journey__step[data-side='right'] .journey__origin {
+  right: calc(100% - var(--x) - var(--dot) / 2);
+  left: auto;
+  flex-direction: row-reverse;
 }
 
 .journey__marker {
@@ -543,20 +596,63 @@ a.entry:hover .entry__arrow {
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
     /*
-     * The timeline only sees the top 55% of the screen (a 45% inset at the bottom), so "entering" means crossing
-     * a reading line a little below the middle: the line draws as it passes that point, not as it scrolls in.
+     * The timeline only sees the top 65% of the screen (a 35% inset at the bottom), so "entering" means crossing
+     * a reading line about two thirds down: the line draws as it passes that point, not as it scrolls in.
      */
     .journey__connector {
       animation: journey-draw linear both;
-      animation-timeline: view(block 0% 45%);
+      animation-timeline: view(block 0% 35%);
       animation-range: entry 0% entry 100%;
     }
 
     .journey__step:not([data-current]) .journey__marker {
       animation: journey-reach linear both;
-      animation-timeline: view(block 0% 45%);
+      animation-timeline: view(block 0% 35%);
       animation-range: entry 0% entry 100%;
     }
+  }
+}
+
+/*
+ * Each step waits for the line: its heading, words, cards and stamps rise in once the drawing reaches its dot,
+ * i.e. once the dot crosses the same reading line. The dot publishes that moment as a named timeline the rest
+ * of the step can follow. Hidden here means transparent only, so screen readers still read every step, and
+ * anything focused by keyboard shows at once.
+ */
+@supports (animation-timeline: view()) and (timeline-scope: --a) {
+  @media (prefers-reduced-motion: no-preference) {
+    .journey__step,
+    .journey--next {
+      timeline-scope: --reach;
+    }
+
+    .journey__marker,
+    .journey__open {
+      view-timeline: --reach block;
+      view-timeline-inset: 0% 35%;
+    }
+
+    .journey__chapter,
+    .journey__text,
+    .journey__extra,
+    .journey__next {
+      animation: journey-appear linear both;
+      animation-timeline: --reach;
+      /* About a tenth of a screen of scrolling to fade in fully */
+      animation-range: entry 0% cover 15%;
+    }
+
+    .journey__step :focus-within,
+    .journey__next:focus {
+      animation: none;
+    }
+  }
+}
+
+@keyframes journey-appear {
+  from {
+    opacity: 0;
+    translate: 0 0.75rem;
   }
 }
 
@@ -654,7 +750,16 @@ a.entry:hover .entry__arrow {
   .journey {
     --gap: 1rem;
     --dot-top: 0.4rem;
-    padding-top: 9rem;
+    --lead: 8rem;
+    padding-top: 11rem;
+  }
+
+  .journey__origin,
+  .journey__step[data-side='right'] .journey__origin {
+    right: auto;
+    left: calc(var(--x) - var(--dot) / 2);
+    flex-direction: row;
+    font-size: 1.125rem;
   }
 
   .journey__step {

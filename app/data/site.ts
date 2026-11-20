@@ -177,23 +177,30 @@ export const milestones: Milestone[] = [
   {
     year: '2016',
     dateTime: '2016',
-    title: 'Learning in public',
+    title: 'Sharing my work',
     description: 'Started putting my work out in the open, for anyone to see, use and improve.',
     widget: 'contributions',
   },
   {
+    year: '2019',
+    dateTime: '2019',
+    title: 'Going freelance',
+    description:
+      'Built shops, portfolios and apps for clients as a freelance developer and designer, and co-founded a music and video startup for artists.',
+  },
+  {
     year: '2021',
     dateTime: '2021',
-    title: 'Building with others',
-    description: 'Helped a community find its way through a big change, and learned the best things are built together.',
+    title: 'Giving back',
+    description:
+      'Built isnuxt3ready, a community guide to which modules were ready for Nuxt 3. It later became part of the official Nuxt docs.',
   },
   {
     year: '2022',
     dateTime: '2022',
     chapter: 'Finding my craft',
-    title: 'Finding design',
-    description:
-      'Inspired by a creative friend, I went deep into UI design, and made small experiments just to see how far an idea could go.',
+    title: 'Falling for design',
+    description: 'Went deep into UI design, making small experiments just to see how far an idea could go.',
     widget: 'design',
   },
   {
@@ -201,26 +208,20 @@ export const milestones: Milestone[] = [
     dateTime: '2023',
     title: 'Leading and teaching',
     description:
-      'Became a tech lead, building for some of the world’s most recognizable brands, and ran workshops to pass on what I had learned.',
-  },
-  {
-    year: '2024',
-    dateTime: '2024',
-    title: 'People, not platforms',
-    description: 'Choosing more carefully where to spend my time, and letting things go once they had done their job.',
+      'Joined MRM as a full-stack developer, where I lead projects and mentor others, and ran Nuxt, UnoCSS and accessibility workshops on Twitch.',
   },
   {
     year: '2025',
     dateTime: '2025',
     chapter: 'Building my own',
-    title: 'A studio of my own',
-    description: 'Started a small web design studio.',
+    title: 'sector9',
+    description: 'Started sector9, my own small web design studio.',
   },
   {
     year: '2026',
     dateTime: '2026',
-    title: 'Building for creators',
-    description: 'Making tools that help creators build their worlds, working in the open again, and meeting the community in person.',
+    title: 'Songbird Labs',
+    description: 'Building Roblox tools that help creators make their worlds, and meeting the community in person.',
     widget: 'here',
   },
 ]

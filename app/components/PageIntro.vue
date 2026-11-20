@@ -1,10 +1,13 @@
 <script setup lang="ts">
-defineProps<{ title: string }>()
+// The title is plain text, or the `title` slot when it needs more than text (an icon, say)
+defineProps<{ title?: string }>()
 </script>
 
 <template>
   <header class="page-intro">
-    <h1 class="page-intro__title display">{{ title }}</h1>
+    <h1 class="page-intro__title display">
+      <slot name="title">{{ title }}</slot>
+    </h1>
     <slot />
   </header>
 </template>

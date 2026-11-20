@@ -10,7 +10,7 @@ export default defineNuxtConfig({
   site: {
     url: 'https://owlnai.com',
     name: 'Unai Mengual',
-    description: 'Tech lead and full-stack developer in Spain. Nuxt, Vue, open source and a soft spot for wikis.',
+    description: 'Full-stack developer in Spain. Nuxt, Vue, open source and a soft spot for wikis.',
     defaultLocale: 'en',
   },
   modules: [
