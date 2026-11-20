@@ -1,14 +1,39 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import { fileURLToPath } from 'node:url'
 
+// Geist upright and italic, latin and latin-ext. The npm provider reads only a package's index.css, which for
+// @fontsource-variable/geist has no italics, so these faces point at the package's files directly.
+const LATIN = 'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD'
+const LATIN_EXT = 'U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF'
+const geistFaces = (['normal', 'italic'] as const).flatMap((style) =>
+  ([['latin', LATIN], ['latin-ext', LATIN_EXT]] as const).map(([subset, unicodeRange]) => ({
+    name: 'Geist Variable',
+    src: {
+      url: new URL(`./node_modules/@fontsource-variable/geist/files/geist-${subset}-wght-${style}.woff2`, import.meta.url).href,
+      format: 'woff2',
+    },
+    weight: [100, 900] as [number, number],
+    style,
+    unicodeRange,
+    global: true,
+  })),
+)
+
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
-  css: [
-    '~/assets/css/main.css',
-    '@fontsource-variable/geist/wght.css',
-    '@fontsource-variable/geist/wght-italic.css',
-    '@fontsource-variable/geist-mono/wght.css',
-  ],
+  css: ['~/assets/css/main.css'],
+  // Self-hosted from the installed @fontsource packages (no network needed) and served from /_fonts/.
+  // Importing the @fontsource CSS directly let the Nuxt 5 nightly build point each @font-face at another font's file.
+  fonts: {
+    defaults: { subsets: ['latin', 'latin-ext'] },
+    families: [
+      ...geistFaces,
+      { name: 'Geist Mono Variable', provider: 'npm', weights: ['100 900'], styles: ['normal'], global: true },
+      // The contact ticket on the About page
+      { name: 'Bebas Neue', provider: 'npm', weights: [400], styles: ['normal'], global: true },
+      { name: 'Space Mono', provider: 'npm', weights: [400, 700], styles: ['normal'], global: true },
+    ],
+  },
   site: {
     url: 'https://owlnai.com',
     name: 'Unai Mengual',
@@ -20,6 +45,7 @@ export default defineNuxtConfig({
     '@ui-sdk/vue',
     '@nuxtjs/seo',
     '@nuxt/image',
+    '@nuxt/fonts',
   ],
   // ViteHub sets Nitro's cloudflare-module preset and writes .output/server/wrangler.json with the bindings
   vitehub: {

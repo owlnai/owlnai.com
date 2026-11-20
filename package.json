@@ -28,6 +28,7 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@nuxt/fonts": "1.2.0",
     "@nuxt/image": "^2.2.1",
     "@nuxtjs/seo": "^6.0.1",
     "nuxt": "npm:nuxt-nightly@5.0.0-2611192005-90d717d",

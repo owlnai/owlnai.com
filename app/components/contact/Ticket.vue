@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import '@fontsource/bebas-neue/400.css'
-import '@fontsource/space-mono/400.css'
-import '@fontsource/space-mono/700.css'
 import { person, socials } from '~/data/site'
 
 // An all-access pass: always dark so its foil shows, the photo printed edge to edge, a holographic band across
