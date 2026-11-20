@@ -32,6 +32,13 @@
   --accent: light-dark(#0b7a45, #4ade80);
   --accent-wash: light-dark(#e3f3ea, #10251a);
   --shadow: light-dark(rgb(0 0 0 / 0.08), rgb(0 0 0 / 0.5));
+  /* The contact ticket's holographic colours, a little deeper on light backgrounds so they still read.
+     Shared by the Places map and the music pieces. */
+  --holo-1: light-dark(hsl(320 75% 62%), hsl(320 85% 76%));
+  --holo-2: light-dark(hsl(265 70% 64%), hsl(265 85% 80%));
+  --holo-3: light-dark(hsl(195 80% 50%), hsl(195 85% 72%));
+  --holo-4: light-dark(hsl(150 60% 45%), hsl(150 70% 70%));
+  --holo-5: light-dark(hsl(45 90% 50%), hsl(50 90% 72%));
 
   --font-sans: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'Geist Mono Variable', ui-monospace, 'SF Mono', Menlo, monospace;

@@ -18,7 +18,7 @@ const active = ref<string | null>(null)
     <div class="head">
       <PageIntro title="Places." class="head__intro" />
       <section class="atlas" aria-label="Map of places">
-        <PlacesMap :places="places ?? []" :active="active" @hover="active = $event" />
+        <PlacesMap :places="places ?? []" :active="active" :aspect="1.55" @hover="active = $event" />
       </section>
     </div>
 
@@ -41,6 +41,11 @@ const active = ref<string | null>(null)
 .head {
   display: grid;
   grid-template-columns: minmax(0, 22rem) minmax(0, 1fr);
+}
+
+/* The title sits low in the band, level with the lower half of the map, rather than up by the menu */
+.head__intro {
+  align-self: end;
 }
 
 .atlas {

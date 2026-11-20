@@ -5,7 +5,10 @@ import { worldDots } from '~/data/world-dots'
 
 // A dotted map framed around the places visited: land as a grid of dots, a holographic pin for each place
 // and an arc to it from home. Pins are links. Hovering a pin or its card (via `active`) lights up both.
-const props = defineProps<{ places: PlacesCollectionItem[]; active?: string | null }>()
+const props = withDefaults(
+  defineProps<{ places: PlacesCollectionItem[]; active?: string | null; aspect?: number }>(),
+  { active: null, aspect: 2 },
+)
 const emit = defineEmits<{ hover: [path: string | null] }>()
 
 // Each cell of the land mask is CELL units wide in the SVG
@@ -19,13 +22,36 @@ const project = ([lat, lng]: [number, number]) => ({
   y: (worldDots.top - lat) * scale + CELL / 2,
 })
 
+// Land left off the map, as [lng, lat] outlines: Greenland, whose bulk sat at the top of the frame and
+// drew the eye away from the places. The outline runs between it and Iceland and Canada's islands.
+const hidden: [number, number][][] = [
+  [
+    [-73.8, 77.8], [-60, 82.5], [-30, 84.5], [-8, 82], [-16, 75], [-20, 70], [-25, 68.5],
+    [-40, 64], [-43, 59], [-50, 61], [-54, 66], [-57, 72], [-62, 75.5], [-74, 76.3],
+  ],
+]
+
+// Even-odd ray cast: is the point inside the outline?
+const inside = ([x, y]: [number, number], ring: [number, number][]) => {
+  let hit = false
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const [xi, yi] = ring[i]!
+    const [xj, yj] = ring[j]!
+    if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) hit = !hit
+  }
+  return hit
+}
+
 // Land as one path: each run of neighbouring dots is a single line, dashed into dots by a zero-length
 // dash every CELL with round caps. Far smaller than a segment per dot.
 const land = worldDots.rows
   .map((row, r) => {
     const y = r * CELL + CELL / 2
     const shift = r % 2 ? CELL / 2 : 0
-    const lit = (c: number) => (parseInt(row[c >> 2]!, 16) >> (3 - (c & 3))) & 1
+    const lat = worldDots.top - r * worldDots.step
+    const lng = (c: number) => c * worldDots.step - 180 + (r % 2 ? worldDots.step / 2 : 0)
+    const lit = (c: number) =>
+      (parseInt(row[c >> 2]!, 16) >> (3 - (c & 3))) & 1 && !hidden.some((ring) => inside([lng(c), lat], ring))
     let d = ''
     let start = -1
     for (let c = 0; c <= worldDots.cols; c++) {
@@ -48,12 +74,12 @@ const pins = computed(() =>
     .map((place) => ({ ...project(place.coords as [number, number]), title: place.title, path: place.path, date: place.date })),
 )
 
-// The frame: everything visited plus home, with room around it, at a fixed 2:1. It never zooms in closer
+// The frame: everything visited plus home, with room around it, at a fixed aspect (2:1 unless told otherwise). It never zooms in closer
 // than MIN_SPAN degrees across, so a few nearby trips still show the land around them, and it grows as
 // the places spread out, up to the whole world.
-const ASPECT = 2
 const MIN_SPAN = 90 * scale
 const view = computed(() => {
+  const ASPECT = props.aspect
   const points = [origin, ...pins.value]
   const xs = points.map((p) => p.x)
   const ys = points.map((p) => p.y)
@@ -93,7 +119,7 @@ const gradient = useId()
 </script>
 
 <template>
-  <div class="map" :data-active="active ? '' : undefined" :style="{ aspectRatio: `${ASPECT}` }">
+  <div class="map" :data-active="active ? '' : undefined" :style="{ aspectRatio: `${aspect}` }">
     <svg :viewBox="`${view.x} ${view.y} ${view.w} ${view.h}`" class="map__svg" aria-hidden="true">
       <defs>
         <linearGradient
@@ -112,14 +138,25 @@ const gradient = useId()
         </linearGradient>
       </defs>
       <path :d="land" class="map__land" :style="{ strokeDasharray: `0 ${CELL}`, strokeWidth: dot }" />
-      <path
-        v-for="arc in arcs"
+      <g
+        v-for="(arc, i) in arcs"
         :key="arc.path"
-        :d="arc.d"
         class="map__arc"
         :data-on="active === arc.path ? '' : undefined"
-        :stroke="`url(#${gradient})`"
-      />
+        :style="{ '--delay': `${i * 0.9}s` }"
+      >
+        <path :d="arc.d" class="map__route" :stroke="`url(#${gradient})`" />
+        <!-- A light running from home to the place: a bright head with a tail that fades behind it -->
+        <path
+          v-for="len in [0.3, 0.14, 0.05]"
+          :key="len"
+          :d="arc.d"
+          pathLength="1"
+          class="map__glint"
+          :stroke="`url(#${gradient})`"
+          :style="{ '--len': len }"
+        />
+      </g>
     </svg>
 
     <span class="map__home" :style="at(origin)">
@@ -149,14 +186,8 @@ const gradient = useId()
 </template>
 
 <style scoped>
-/* The ticket's holographic colours, a little deeper on light backgrounds so they still read */
+/* Colours come from the --holo-* tokens in main.css */
 .map {
-  --holo-1: light-dark(hsl(320 75% 62%), hsl(320 85% 76%));
-  --holo-2: light-dark(hsl(265 70% 64%), hsl(265 85% 80%));
-  --holo-3: light-dark(hsl(195 80% 50%), hsl(195 85% 72%));
-  --holo-4: light-dark(hsl(150 60% 45%), hsl(150 70% 70%));
-  --holo-5: light-dark(hsl(45 90% 50%), hsl(50 90% 72%));
-
   position: relative;
   width: 100%;
   overflow: hidden;
@@ -175,32 +206,66 @@ const gradient = useId()
 }
 
 .map__arc {
+  transition: opacity 0.25s;
+}
+
+.map__route,
+.map__glint {
   fill: none;
-  stroke-width: 1.75;
-  stroke-dasharray: 4 5;
   stroke-linecap: round;
   vector-effect: non-scaling-stroke;
-  animation: march 1.6s linear infinite;
+}
+
+.map__route {
+  stroke-width: 1.5;
+  opacity: 0.55;
   transition:
     opacity 0.25s,
     stroke-width 0.25s;
 }
 
-/* While one place is active, its arc goes solid and the others step back */
+/* Three stacked dashes share a leading edge: the shortest is the bright head, the longer ones the tail.
+   Each is one dash of length --len on a path of length 1, slid from before the start to past the end. */
+.map__glint {
+  --len: 0.1;
+
+  stroke-width: 2.5;
+  stroke-dasharray: calc(var(--len) * 1px) 2px;
+  stroke-dashoffset: calc(var(--len) * 1px - var(--head));
+  opacity: calc(0.25 + (0.3 - var(--len)) * 3);
+  animation: glint 2.8s var(--delay, 0s) cubic-bezier(0.45, 0, 0.3, 1) infinite;
+}
+
+/* Where the head is along the route, 0 at home to past the end. Registered so it can be animated. */
+@property --head {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
+@keyframes glint {
+  0% {
+    --head: 0px;
+  }
+  /* Arrive, then rest out of sight before the next run */
+  70%,
+  100% {
+    --head: 1.35px;
+  }
+}
+
+/* While one place is active, its route brightens and the others step back */
 .map[data-active] .map__arc {
   opacity: 0.25;
 }
 
 .map[data-active] .map__arc[data-on] {
   opacity: 1;
-  stroke-width: 2.5;
-  stroke-dasharray: none;
 }
 
-@keyframes march {
-  to {
-    stroke-dashoffset: -18;
-  }
+.map__arc[data-on] .map__route {
+  stroke-width: 2.5;
+  opacity: 1;
 }
 
 /* Home: a plain ink dot with its name always showing, the quiet end of every arc */
@@ -334,7 +399,10 @@ const gradient = useId()
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .map__arc,
+  .map__glint {
+    display: none;
+  }
+
   .map__dot,
   .map__dot::after {
     animation: none;
