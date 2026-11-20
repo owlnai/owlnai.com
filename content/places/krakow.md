@@ -3,6 +3,7 @@ title: Kraków
 description: Four days in Kraków, meeting friends from the internet for the first time.
 date: '2026-06'
 country: pl
+coords: [50.0647, 19.945]
 cover: /places/krakow/vistula-riverbank.jpg
 coverAlt: The Vistula riverbank in Kraków at golden hour, with people sitting on the grassy slope, boats moored along the quay, and a Ferris wheel and tethered balloon in the distance.
 ---

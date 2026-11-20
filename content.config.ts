@@ -35,6 +35,8 @@ export default defineContentConfig({
         country: z.string().optional(),
         cover: z.string().optional(),
         coverAlt: z.string().optional(),
+        // [latitude, longitude], used to pin the place on the map
+        coords: z.tuple([z.number(), z.number()]).optional(),
       }),
     }),
   },

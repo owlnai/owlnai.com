@@ -3,6 +3,7 @@ title: Bordeaux
 description: A week in Bordeaux, and the small kindnesses that made it feel like a second home.
 date: '2025-04-12'
 country: fr
+coords: [44.8378, -0.5792]
 cover: /places/bordeaux/tram-street.jpg
 coverAlt: A cobbled street with tram tracks running between pale stone buildings with wrought-iron balconies, a scooter crossing in the distance.
 ---

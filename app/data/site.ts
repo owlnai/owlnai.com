@@ -4,6 +4,12 @@ export const person = {
   location: 'Spain',
 }
 
+// Where trips start from on the Places map. Madrid rather than the exact town: central, and close enough.
+export const home = {
+  label: 'Home',
+  coords: [40.4168, -3.7038] as [number, number],
+}
+
 export interface Brand {
   name: string
   href: string

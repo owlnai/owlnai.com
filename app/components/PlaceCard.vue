@@ -2,13 +2,15 @@
 import type { PlacesCollectionItem } from '@nuxt/content'
 import { flags } from '~/data/flags'
 
-const props = defineProps<{ place: PlacesCollectionItem }>()
+// `memory` adds the post's one-line description under the title; `active` shows the hover state when the
+// place is highlighted from elsewhere, like its pin on the map.
+const props = defineProps<{ place: PlacesCollectionItem; memory?: boolean; active?: boolean }>()
 
 const flag = computed(() => (props.place.country ? flags[props.place.country] : undefined))
 </script>
 
 <template>
-  <NuxtLink :to="place.path" class="place">
+  <NuxtLink :to="place.path" class="place" :data-active="active ? '' : undefined">
     <span class="place__cover" :data-empty="place.cover ? undefined : ''">
       <img v-if="place.cover" :src="place.cover" alt="" loading="lazy" />
     </span>
@@ -18,6 +20,7 @@ const flag = computed(() => (props.place.country ? flags[props.place.country] : 
         {{ place.title }}
       </span>
       <time class="place__date mono" :datetime="place.date">{{ monthYear(place.date) }}</time>
+      <span v-if="memory && place.description" class="place__memory">{{ place.description }}</span>
     </span>
   </NuxtLink>
 </template>
@@ -30,7 +33,8 @@ const flag = computed(() => (props.place.country ? flags[props.place.country] : 
   transition: background-color 0.2s;
 }
 
-.place:hover {
+.place:hover,
+.place[data-active] {
   background: var(--sunken);
 }
 
@@ -58,16 +62,18 @@ const flag = computed(() => (props.place.country ? flags[props.place.country] : 
   transition: scale 0.6s var(--ease-out);
 }
 
-.place:hover .place__cover img {
+.place:hover .place__cover img,
+.place[data-active] .place__cover img {
   scale: 1.03;
 }
 
 .place__text {
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
-  gap: 1rem;
-  padding: 1.4rem var(--gutter) 1.5rem;
+  gap: 0.6rem 1rem;
+  padding: var(--space-row) var(--gutter) calc(var(--space-row) + 0.1rem);
 }
 
 .place__title {
@@ -89,5 +95,13 @@ const flag = computed(() => (props.place.country ? flags[props.place.country] : 
   color: var(--ink-faint);
   font-size: 0.6875rem;
   white-space: nowrap;
+}
+
+.place__memory {
+  flex-basis: 100%;
+  color: var(--ink-soft);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  text-wrap: pretty;
 }
 </style>

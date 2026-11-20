@@ -3,6 +3,7 @@ title: Liège
 description: Familiar, yet cold. A rainy week in Liège just before Halloween.
 date: '2025-10'
 country: be
+coords: [50.6326, 5.5797]
 cover: /places/liege/guillemins-station.jpg
 coverAlt: Liège-Guillemins railway station at night, its sweeping white canopy lit up above an empty road and cobbled pavement.
 ---
