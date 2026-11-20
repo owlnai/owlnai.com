@@ -45,11 +45,6 @@ useSeoMeta({
         </p>
         <h1 class="hero__name display">{{ person.name }}</h1>
       </div>
-      <figure class="hero__portrait">
-        <span class="cross" data-at="tl" />
-        <span class="cross" data-at="br" />
-        <NuxtImg src="/icon.png" :alt="`Portrait of ${person.name}`" width="460" height="460" />
-      </figure>
     </section>
 
     <SectionBlock id="about" title="About">
@@ -144,8 +139,7 @@ useSeoMeta({
 <style scoped>
 .hero {
   display: grid;
-  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-  min-height: min(42rem, calc(100svh - 3.5rem));
+  min-height: min(28rem, calc(100svh - 3.5rem));
 }
 
 .hero__text {
@@ -157,7 +151,7 @@ useSeoMeta({
 }
 
 .hero__statement {
-  max-width: 32rem;
+  max-width: 38rem;
   color: var(--ink-soft);
   font-size: clamp(1.125rem, 1.9vw, 1.5rem);
   font-weight: 450;
@@ -218,24 +212,6 @@ useSeoMeta({
       translate: 0 0.75rem;
     }
   }
-}
-
-.hero__portrait {
-  --cross-size: 25px;
-  position: relative;
-  margin: var(--gutter);
-}
-
-.hero__portrait img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: grayscale(1) contrast(1.04);
-  transition: filter 0.4s;
-}
-
-.hero__portrait:hover img {
-  filter: none;
 }
 
 .lede {
@@ -435,17 +411,11 @@ useSeoMeta({
 
 @media (max-width: 52rem) {
   .hero {
-    grid-template-columns: minmax(0, 1fr);
     min-height: 0;
   }
 
   .hero__text {
     gap: 2.5rem;
-  }
-
-  .hero__portrait {
-    aspect-ratio: 1;
-    margin-top: 0;
   }
 
   .cards--places,
