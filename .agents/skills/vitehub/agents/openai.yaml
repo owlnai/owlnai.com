@@ -1,0 +1,4 @@
+interface:
+  display_name: "ViteHub"
+  short_description: "Build complete ViteHub projects"
+  default_prompt: "Use $vitehub to route the smallest relevant reference set, follow live docs and the installed contract, and prove every requested behavior."

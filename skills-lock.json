@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "skills": {
+    "vitehub": {
+      "source": "vitehub.dev",
+      "sourceUrl": "https://vitehub.dev",
+      "sourceType": "well-known",
+      "computedHash": "9356036946fd02efc4eea4423492deef103c12fe8cfce4bd83e070713806d1d0",
+      "wellKnownDigest": "sha256:115752722dd45fc7494955460a1c2a26aa3959da630cb7082f8b42feacd089f0"
+    }
+  }
+}
