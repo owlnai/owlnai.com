@@ -20,6 +20,11 @@ export default defineNuxtConfig({
     '@nuxtjs/seo',
     '@nuxt/image',
   ],
+  hub: {
+    // Build for Cloudflare Workers (the cloudflare_module preset) instead of Pages.
+    // wrangler.jsonc at the repo root points `wrangler deploy` at the output in dist/.
+    workers: true,
+  },
   content: {
     experimental: {
       // node:sqlite, so local dev doesn't depend on a better-sqlite3 binary built for one Node version

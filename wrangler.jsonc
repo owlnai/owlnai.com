@@ -1,0 +1,14 @@
+// Cloudflare Workers config. Workers Builds pulls this repo, runs `pnpm build`, then `npx wrangler deploy`.
+// `pnpm build` writes the Worker to dist/server and the static files (prerendered pages included) to dist/public.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "owlnai-com",
+  "main": "dist/server/index.mjs",
+  "compatibility_date": "2025-07-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "dist/public",
+    "binding": "ASSETS"
+  },
+  "observability": { "enabled": true }
+}
