@@ -14,17 +14,18 @@ export default defineNuxtConfig({
     defaultLocale: 'en',
   },
   modules: [
-    '@nuxthub/core',
     '@nuxt/content',
     '@ui-sdk/vue',
     '@nuxtjs/seo',
     '@nuxt/image',
   ],
-  hub: {
-    // Build for Cloudflare Workers (the cloudflare_module preset) instead of Pages.
-    // wrangler.jsonc at the repo root points `wrangler deploy` at the output in dist/.
-    workers: true,
-  },
+  // Every sitemap URL is known at build time, so write sitemap.xml as a file instead of a Worker route
+  sitemap: { zeroRuntime: true },
+  // No OG image renderer is installed; this also stops the module copying its fonts into the build
+  ogImage: { enabled: false },
+  // Bundled with @nuxtjs/seo v6. It registers a service worker and polls for new builds,
+  // and its store of old assets lives in node_modules/.cache, which Workers Builds does not keep
+  skewProtection: false,
   content: {
     experimental: {
       // node:sqlite, so local dev doesn't depend on a better-sqlite3 binary built for one Node version
@@ -48,7 +49,11 @@ export default defineNuxtConfig({
     '/rss.xml': { prerender: true },
   },
   nitro: {
-    prerender: { crawlLinks: true, routes: ['/rss.xml'] },
+    // Build for Cloudflare Workers. wrangler.jsonc at the repo root points `wrangler deploy` at dist/.
+    preset: 'cloudflare_module',
+    output: { dir: 'dist' },
+    // about.html rather than about/index.html, so Workers serves /about without redirecting to /about/
+    prerender: { crawlLinks: true, autoSubfolderIndex: false, routes: ['/rss.xml'] },
     experimental: {
       openAPI: true,
     },

@@ -5,7 +5,7 @@ const { data: post } = await useAsyncData(`blog-${route.params.slug}`, () =>
 )
 
 if (!post.value) {
-  throw createError({ statusCode: 404, statusMessage: 'Post not found', fatal: true })
+  throw createError({ status: 404, statusText: 'Post not found', fatal: true })
 }
 
 // Ordered newest first, so the item before this one is the newer post

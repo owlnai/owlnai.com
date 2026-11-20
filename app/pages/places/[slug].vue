@@ -7,7 +7,7 @@ const { data: place } = await useAsyncData(`place-${route.params.slug}`, () =>
 )
 
 if (!place.value) {
-  throw createError({ statusCode: 404, statusMessage: 'Place not found', fatal: true })
+  throw createError({ status: 404, statusText: 'Place not found', fatal: true })
 }
 
 const flag = computed(() => (place.value?.country ? flags[place.value.country] : undefined))
