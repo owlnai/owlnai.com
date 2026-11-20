@@ -71,7 +71,7 @@ useSeoMeta({
   gap: 0.2rem 1rem;
   min-width: 0;
   margin: 0 -1px -1px 0;
-  padding: 1.25rem var(--gutter) 1.4rem;
+  padding: var(--space-row) var(--gutter) calc(var(--space-row) + 0.15rem);
   border-inline-end: 1px solid var(--line);
   border-block-end: 1px solid var(--line);
 }

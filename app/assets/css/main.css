@@ -37,6 +37,10 @@
   --font-mono: 'Geist Mono Variable', ui-monospace, 'SF Mono', Menlo, monospace;
 
   --gutter: clamp(1rem, 3vw, 1.75rem);
+  /* Vertical rhythm: section headers, list rows, and taller tiles like notes and Lately */
+  --space-section: clamp(3rem, 6vw, 4.5rem);
+  --space-row: 2.25rem;
+  --space-tile: 2.75rem;
   --label-col: 13.5rem;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }

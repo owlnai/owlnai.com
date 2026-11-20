@@ -147,7 +147,7 @@ useSeoMeta({
   flex-direction: column;
   justify-content: space-between;
   gap: 3rem;
-  padding: clamp(1.5rem, 3.5vw, 2.5rem) var(--gutter) clamp(1.5rem, 3vw, 2.25rem);
+  padding: clamp(2rem, 4.5vw, 3.5rem) var(--gutter) clamp(2rem, 4vw, 3rem);
 }
 
 .hero__statement {
@@ -216,7 +216,7 @@ useSeoMeta({
 
 .lede {
   max-width: 46rem;
-  padding: 3rem var(--gutter) 3.25rem;
+  padding: var(--space-section) var(--gutter) calc(var(--space-section) + 0.25rem);
   font-size: clamp(1.25rem, 2.2vw, 1.625rem);
   line-height: 1.35;
   letter-spacing: -0.02em;
@@ -242,7 +242,7 @@ useSeoMeta({
   gap: 0.1rem 0.75rem;
   align-items: center;
   height: 100%;
-  padding: 1.6rem var(--gutter);
+  padding: var(--space-row) var(--gutter);
   transition: background-color 0.2s;
 }
 
@@ -310,7 +310,7 @@ useSeoMeta({
   grid-template-columns: 4.5rem minmax(0, 1fr) 1rem;
   align-items: baseline;
   gap: 1rem;
-  padding: 1.6rem var(--gutter) 1.75rem;
+  padding: var(--space-row) var(--gutter) calc(var(--space-row) + 0.15rem);
   transition: background-color 0.2s;
 }
 
@@ -372,7 +372,7 @@ useSeoMeta({
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 0.25rem 0.75rem;
-  padding: 1.6rem var(--gutter) 1.7rem;
+  padding: var(--space-row) var(--gutter) calc(var(--space-row) + 0.1rem);
   transition:
     background-color 0.2s,
     color 0.2s;

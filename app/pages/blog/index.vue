@@ -51,7 +51,7 @@ useHead({
   grid-template-columns: calc(var(--label-col) - var(--gutter)) minmax(0, 1fr) 1rem;
   align-items: baseline;
   gap: var(--gutter);
-  padding: 1.6rem var(--gutter) 1.8rem;
+  padding: var(--space-row) var(--gutter) calc(var(--space-row) + 0.2rem);
   transition: background-color 0.2s;
 }
 

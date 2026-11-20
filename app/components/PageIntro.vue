@@ -11,7 +11,7 @@ defineProps<{ title: string }>()
 
 <style scoped>
 .page-intro {
-  padding: clamp(3rem, 9vw, 6rem) var(--gutter) clamp(2.5rem, 7vw, 4.5rem);
+  padding: clamp(3.5rem, 10vw, 7rem) var(--gutter) clamp(3rem, 8vw, 5.5rem);
 }
 
 .page-intro__title {

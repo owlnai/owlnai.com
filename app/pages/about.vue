@@ -158,7 +158,7 @@ const stampsAt = computed(() => {
 }
 
 .block {
-  padding: 2rem var(--gutter) 2.5rem;
+  padding: var(--space-tile) var(--gutter) calc(var(--space-tile) + 0.5rem);
 }
 
 .block + .block {
@@ -203,7 +203,7 @@ const stampsAt = computed(() => {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 1rem;
   gap: 0.25rem 1rem;
-  padding: 1.1rem var(--gutter) 1.2rem;
+  padding: var(--space-row) var(--gutter) calc(var(--space-row) + 0.1rem);
   transition: background-color 0.2s;
 }
 

@@ -61,9 +61,9 @@ const showPost = computed(() => isLoading(bluesky.status.value) || post.value)
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  min-height: 11rem;
+  min-height: 12.5rem;
   margin: 0 -1px -1px 0;
-  padding: 2rem var(--gutter) 2.1rem;
+  padding: var(--space-tile) var(--gutter) calc(var(--space-tile) + 0.1rem);
   border-inline-end: 1px solid var(--line);
   border-block-end: 1px solid var(--line);
   transition: background-color 0.2s;

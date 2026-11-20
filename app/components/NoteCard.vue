@@ -25,7 +25,7 @@ defineProps<{ note: NotesCollectionItem }>()
   gap: 0.9rem;
   height: 100%;
   min-width: 0;
-  padding: 2rem var(--gutter) 2.1rem;
+  padding: var(--space-tile) var(--gutter) calc(var(--space-tile) + 0.1rem);
 }
 
 .note__body {

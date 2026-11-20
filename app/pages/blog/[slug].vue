@@ -216,7 +216,7 @@ article :deep(.page-intro__title) {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
-  padding: 1.5rem var(--gutter) 1.75rem;
+  padding: var(--space-row) var(--gutter) calc(var(--space-row) + 0.25rem);
   transition: background-color 0.2s;
 }
 
