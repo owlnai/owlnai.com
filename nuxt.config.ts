@@ -3,33 +3,60 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   css: [
     '~/assets/css/main.css',
+    '@fontsource-variable/geist/wght.css',
+    '@fontsource-variable/geist/wght-italic.css',
+    '@fontsource-variable/geist-mono/wght.css',
   ],
-    site: {
+  site: {
     url: 'https://owlnai.com',
-    name: 'Owlnai',
-    description: 'Developer, writer, and open source enthusiast.',
-    defaultLocale: 'en', // not needed if you have @nuxtjs/i18n installed
+    name: 'Unai Mengual',
+    description: 'Tech lead and full-stack developer in Spain. Nuxt, Vue, open source and a soft spot for wikis.',
+    defaultLocale: 'en',
   },
   modules: [
     '@nuxthub/core',
     '@nuxt/content',
-    '@nuxtjs/color-mode',
-    '@unocss/nuxt',
-    '@nuxt/fonts',
+    '@ui-sdk/vue',
     '@nuxtjs/seo',
     '@nuxt/image',
   ],
-  colorMode: {
-    classSuffix: '',
-    preference: 'system',
-    fallback: 'light'
+  hub: {
+    // Build for Cloudflare Workers (the cloudflare_module preset) instead of Pages.
+    // wrangler.jsonc at the repo root points `wrangler deploy` at the output in dist/.
+    workers: true,
+  },
+  content: {
+    experimental: {
+      // node:sqlite, so local dev doesn't depend on a better-sqlite3 binary built for one Node version
+      sqliteConnector: 'native',
+    },
+  },
+  runtimeConfig: {
+    // Set with NUXT_LASTFM_API_KEY and NUXT_LASTFM_USER
+    lastfm: { apiKey: '', user: '' },
+  },
+  routeRules: {
+    // Baked at build time, so Markdown content needs no database at runtime
+    '/': { prerender: true },
+    '/about': { prerender: true },
+    '/uses': { prerender: true },
+    '/notes': { prerender: true },
+    '/places': { prerender: true },
+    '/places/**': { prerender: true },
+    '/blog': { prerender: true },
+    '/blog/**': { prerender: true },
+    '/rss.xml': { prerender: true },
   },
   nitro: {
+    prerender: { crawlLinks: true, routes: ['/rss.xml'] },
     experimental: {
-      openAPI: true
-    }
+      openAPI: true,
+    },
   },
-    app: {
-    pageTransition: { name: 'page', mode: 'out-in' }
-  }
+  app: {
+    head: {
+      htmlAttrs: { lang: 'en' },
+    },
+    pageTransition: { name: 'page', mode: 'out-in' },
+  },
 })

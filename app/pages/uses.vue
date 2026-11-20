@@ -1,61 +1,161 @@
 <script setup lang="ts">
-definePageMeta({
-    title: "Uses",
-    header: "My Setup & Tools",
-})
-const  uses = [
-        {
-            category: 'Development',
-            items: [
-                { name: 'VS Code', description: 'Primary code editor, but slowly moving to Zed.' },
-                { name: 'Ghostty', description: 'AMAZING terminal! And without AI shoved-in.' },
-                { name: 'GitHub', description: 'Version control and collaboration' },
-                { name: 'Hetzner + Coolify', description: 'Taught me a lot about hosting, and it\'s cooler right?' },
-                { name: 'Figma', description: 'Design, prototyping, and some graphic work' },
-                { name: 'Eagle', description: 'Image and asset management tool' }
-            ]
-        },
-        {
-            category: 'Productivity',
-            items: [
-                { name: 'Obsidian', description: 'Knowledge management and note-taking. A second brain.' },
-                { name: 'Journal App', description: 'It already knows what I did during the day :-)' },
-                { name: 'Raycast', description: 'Launcher and productivity shortcuts' },
-                { name: 'mynoise.net', description: 'Sounds for concentration and relaxation' }
-            ]
-        },
-        {
-            category: 'Hardware',
-            items: [
-                { name: 'MacBook Pro M2', description: '16-inch, primary development machine' },
-                { name: 'iPad Pro M4', description: 'Design prototypes, second monitor and video editing.' },
-                { name: 'Insta360 Link', description: 'The best webcam ever made for most of us.' },
-                { name: 'Studio Display', description: '27-inch 4K display for design work' },
-                { name: 'Elgato Wave:3', description: 'USB microphone for high-quality audio' }
-            ]
-        }
-    ]
-</script>
-<template>
-      <div class="max-w-2xl mx-auto">
+import { uses, usesUpdated } from '~/data/uses'
 
-        <!-- Uses Section -->
-        <section class="mb-12">
-    
-            <div class="space-y-8">
-                <div v-for="category in uses" :key="category.category">
-                    <h3 class="text-lg font-medium mb-4 text-zinc-900 dark:text-zinc-100">{{ category.category }}</h3>
-                    <div class="grid md:grid-cols-2 gap-4">
-                        <div v-for="item in category.items" :key="item.name"
-                            class="flex items-start space-x-3 p-4 bg-zinc-50 dark:bg-zinc-800 rounded-lg">
-                            <div class="flex-1">
-                                <h4 class="font-medium text-zinc-900 dark:text-white">{{ item.name }}</h4>
-                                <p class="text-sm text-zinc-600 dark:text-zinc-400 mt-1">{{ item.description }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-</div>
-    </template>
+useSeoMeta({
+  title: 'Uses',
+  description: 'The software and hardware Unai Mengual uses day to day.',
+})
+</script>
+
+<template>
+  <div>
+    <PageIntro title="The tools I reach for.">
+      <p class="updated">Updated <time :datetime="usesUpdated">{{ monthYear(usesUpdated) }}</time></p>
+    </PageIntro>
+
+    <SectionBlock
+      v-for="group in uses"
+      :id="group.id"
+      :key="group.id"
+      :title="group.category"
+    >
+      <ul class="tools">
+        <li v-for="item in group.items" :key="item.name" class="tool">
+          <span class="tool__logo" :data-kind="item.icon ? 'icon' : 'tile'">
+            <img v-if="item.icon" :src="item.icon" alt="" width="48" height="48" loading="lazy" />
+            <span
+              v-else-if="item.logo && item.logoMono"
+              class="tool__mono"
+              :style="{ '--mark': `url(${item.logo})` }"
+              aria-hidden="true"
+            />
+            <img
+              v-else-if="item.logo"
+              class="tool__mark"
+              :data-inset="item.logoInset ? '' : undefined"
+              :src="item.logo"
+              alt=""
+              width="48"
+              height="48"
+              loading="lazy"
+            />
+            <svg v-else-if="item.glyph" :viewBox="item.glyphViewBox ?? '0 0 24 24'" aria-hidden="true">
+              <path :d="item.glyph" />
+            </svg>
+            <span v-else aria-hidden="true">{{ item.name.charAt(0) }}</span>
+          </span>
+          <span class="tool__name display" :data-solo="item.description ? undefined : ''">{{ item.name }}</span>
+          <span v-if="item.description" class="tool__desc">{{ item.description }}</span>
+        </li>
+      </ul>
+    </SectionBlock>
+  </div>
+</template>
+
+<style scoped>
+.updated {
+  margin-top: 1.5rem;
+  color: var(--ink-soft);
+}
+
+.tools {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  overflow: clip;
+}
+
+.tool {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1fr);
+  align-content: start;
+  gap: 0.2rem 1rem;
+  min-width: 0;
+  margin: 0 -1px -1px 0;
+  padding: 1.25rem var(--gutter) 1.4rem;
+  border-inline-end: 1px solid var(--line);
+  border-block-end: 1px solid var(--line);
+}
+
+.tool__logo {
+  grid-row: span 2;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+}
+
+/* App icons bring their own shape; glyphs and letters sit in a tile */
+.tool__logo[data-kind='tile'] {
+  border: 1px solid var(--line-strong);
+  border-radius: 0.7rem;
+  background: var(--raised);
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 1.125rem;
+  text-transform: lowercase;
+}
+
+.tool__logo img {
+  width: 100%;
+  height: 100%;
+}
+
+/* A brand's site icon fills the tile, or sits padded inside it when it has no background */
+.tool__logo[data-kind='tile'] {
+  overflow: clip;
+}
+
+.tool__mark {
+  object-fit: cover;
+}
+
+.tool__mark[data-inset] {
+  padding: 0.5rem;
+  object-fit: contain;
+}
+
+.tool__mono {
+  width: 100%;
+  height: 100%;
+  background: var(--ink);
+  mask: var(--mark) center / calc(100% - 0.75rem) auto no-repeat;
+}
+
+.tool__logo svg {
+  width: 1.375rem;
+  height: 1.375rem;
+  fill: var(--ink);
+}
+
+.tool__name {
+  align-self: end;
+  font-size: 1.125rem;
+  letter-spacing: -0.03em;
+  line-height: 1.25;
+}
+
+/* A tool with no description centres its name against the logo */
+.tool__name[data-solo] {
+  grid-row: span 2;
+  align-self: center;
+}
+
+.tool__desc {
+  grid-column: 2;
+  color: var(--ink-soft);
+  font-size: 0.9375rem;
+  line-height: 1.45;
+}
+
+@media (max-width: 64rem) {
+  .tools {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 34rem) {
+  .tools {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+</style>
