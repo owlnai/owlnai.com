@@ -71,7 +71,7 @@ const flag = computed(() => (props.place.country ? flags[props.place.country] : 
   align-items: baseline;
   justify-content: space-between;
   gap: 1rem;
-  padding: 1rem var(--gutter) 1.1rem;
+  padding: 1.4rem var(--gutter) 1.5rem;
 }
 
 .place__title {

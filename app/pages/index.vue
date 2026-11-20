@@ -179,7 +179,7 @@ useSeoMeta({
   display: inline-block;
   width: 1.15em;
   height: 1.15em;
-  margin-inline-end: 0.3em;
+  margin-inline: 0.2em 0.35em;
   border-radius: 0.25em;
   box-shadow: 0 0 0 1px var(--line-strong);
   object-fit: cover;
@@ -216,7 +216,7 @@ useSeoMeta({
 
 .lede {
   max-width: 46rem;
-  padding: 2rem var(--gutter) 2.25rem;
+  padding: 3rem var(--gutter) 3.25rem;
   font-size: clamp(1.25rem, 2.2vw, 1.625rem);
   line-height: 1.35;
   letter-spacing: -0.02em;
@@ -242,7 +242,7 @@ useSeoMeta({
   gap: 0.1rem 0.75rem;
   align-items: center;
   height: 100%;
-  padding: 1.1rem var(--gutter);
+  padding: 1.6rem var(--gutter);
   transition: background-color 0.2s;
 }
 
@@ -310,7 +310,7 @@ useSeoMeta({
   grid-template-columns: 4.5rem minmax(0, 1fr) 1rem;
   align-items: baseline;
   gap: 1rem;
-  padding: 1.15rem var(--gutter) 1.25rem;
+  padding: 1.6rem var(--gutter) 1.75rem;
   transition: background-color 0.2s;
 }
 
@@ -372,7 +372,7 @@ useSeoMeta({
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 0.25rem 0.75rem;
-  padding: 1.1rem var(--gutter) 1.2rem;
+  padding: 1.6rem var(--gutter) 1.7rem;
   transition:
     background-color 0.2s,
     color 0.2s;
