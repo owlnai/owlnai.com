@@ -1,24 +1,49 @@
 <script setup lang="ts">
-// An album cover, or a little record when Last.fm has none or its image won't load.
+// An album cover over a little record. The record shows while the cover loads (Last.fm can take
+// seconds to make a size it hasn't served before), when Last.fm has none, or when it won't load.
 // Decorative: the track's name is always beside it.
 const props = defineProps<{ src?: string | null }>()
 
+const img = useTemplateRef<HTMLImageElement>('img')
+const loaded = ref(false)
 const failed = ref(false)
+
+// An image the browser already has can finish loading before Vue listens for `load`
+function checkComplete() {
+  if (img.value?.complete && img.value.naturalWidth > 0) loaded.value = true
+}
+
 watch(
   () => props.src,
-  () => (failed.value = false),
+  () => {
+    loaded.value = false
+    failed.value = false
+    nextTick(checkComplete)
+  },
 )
+onMounted(checkComplete)
 </script>
 
 <template>
   <span class="cover">
-    <img v-if="src && !failed" :src="src" alt="" loading="lazy" class="cover__img" @error="failed = true" />
-    <span v-else class="cover__record" aria-hidden="true" />
+    <span class="cover__record" aria-hidden="true" />
+    <img
+      v-if="src && !failed"
+      ref="img"
+      :key="src"
+      :src="src"
+      alt=""
+      class="cover__img"
+      :data-loaded="loaded ? '' : undefined"
+      @load="loaded = true"
+      @error="failed = true"
+    />
   </span>
 </template>
 
 <style scoped>
 .cover {
+  position: relative;
   display: grid;
   flex: none;
   place-items: center;
@@ -30,9 +55,22 @@ watch(
 }
 
 .cover__img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  opacity: 0;
+}
+
+.cover__img[data-loaded] {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cover__img {
+    transition: opacity 0.35s var(--ease-out);
+  }
 }
 
 /* Vinyl: a dark disc with faint grooves and a holo label */

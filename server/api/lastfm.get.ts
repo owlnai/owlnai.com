@@ -1,4 +1,5 @@
-import { defineEventHandler, useRuntimeConfig } from 'nuxt/server'
+import { type H3Event, defineEventHandler } from 'nitro/h3'
+import { useRuntimeConfig } from 'nuxt/server'
 import { defineCachedFunction } from 'vite-hub/cache'
 import { fetchJson } from '../utils/fetch-json'
 
@@ -62,11 +63,33 @@ const getRecentTrack = defineCachedFunction(
   { maxAge: 30, swr: true, staleIfError: 60 * 60, name: 'lastfm-recent', getKey: (user: string) => user },
 )
 
-export default defineEventHandler(async () => {
+// Last.fm makes each cover size the first time anyone asks for it, which took 9 seconds in testing; after that
+// its CDN answers in milliseconds. A new track's covers are usually first asked for by a reader's browser, so
+// the Worker asks for both sizes itself as soon as it sees them, after the response is sent. Each Worker
+// instance remembers the last few it asked for, so a cover is fetched once per instance, not once per poll.
+const warmed = new Set<string>()
+
+function warmCovers(event: H3Event, urls: string[]) {
+  for (const url of urls) {
+    if (warmed.has(url)) continue
+    warmed.add(url)
+    if (warmed.size > 20) warmed.delete(warmed.values().next().value!)
+    event.waitUntil(
+      fetch(url, { signal: AbortSignal.timeout(20_000) })
+        .then((response) => response.arrayBuffer())
+        .catch(() => warmed.delete(url)),
+    )
+  }
+}
+
+export default defineEventHandler(async (event) => {
   const { apiKey, user } = useRuntimeConfig().lastfm
   if (!apiKey || !user) return { track: null }
   try {
-    return await getRecentTrack(user, apiKey)
+    const result = await getRecentTrack(user, apiKey)
+    const cover = result.track?.cover
+    if (cover) warmCovers(event, [cover.small, cover.large])
+    return result
   } catch {
     return { track: null }
   }
