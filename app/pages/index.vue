@@ -84,6 +84,7 @@ defineOgImage('Site', {
             <span
               v-if="stars[item.id]"
               class="orgs__stars mono"
+              role="img"
               :aria-label="`${stars[item.id]} GitHub stars`"
             >
               <svg viewBox="0 0 24 24" aria-hidden="true">
