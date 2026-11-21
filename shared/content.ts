@@ -1,7 +1,18 @@
 import { z } from 'zod'
 
-// Frontmatter of each folder in content/. The server checks every document against these,
-// so a typo in a date or a missing title fails the prerender instead of reaching a page.
+// 'YYYY-MM-DD', or 'YYYY-MM' for a month-only date. Anything else would sort and format wrongly.
+const isRealDate = (value: string) => {
+  const time = Date.parse(`${value.length === 7 ? `${value}-01` : value}T00:00:00Z`)
+  return !Number.isNaN(time) && new Date(time).toISOString().startsWith(value)
+}
+const date = z
+  .string()
+  .regex(/^\d{4}-(0[1-9]|1[0-2])(-(0[1-9]|[12]\d|3[01]))?$/, 'Use YYYY-MM-DD or YYYY-MM, in quotes')
+  .refine(isRealDate, 'Not a real calendar date')
+
+// Frontmatter of each folder in content/. The server checks every document against these, and each page
+// that lists content fails when its fetch does (assertLoaded in app/utils/content.ts), so a typo in a date
+// or a missing title fails the prerender instead of reaching a page.
 export const schemas = {
   // about.md and headline.md
   pages: z.object({
@@ -11,7 +22,7 @@ export const schemas = {
   blog: z.object({
     title: z.string(),
     description: z.string().optional(),
-    date: z.string(),
+    date,
     canonical: z.string().optional(),
   }),
   // Short snippets: a thought, a quote worth keeping, or a piece of code
@@ -20,13 +31,13 @@ export const schemas = {
     caption: z.string().optional(),
     author: z.string().optional(),
     url: z.string().optional(),
-    date: z.string().optional(),
+    date: date.optional(),
   }),
   // Travel posts. Photos live in public/places/<slug>/
   places: z.object({
     title: z.string(),
     description: z.string().optional(),
-    date: z.string(),
+    date,
     country: z.string().optional(),
     cover: z.string().optional(),
     coverAlt: z.string().optional(),
