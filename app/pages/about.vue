@@ -605,18 +605,24 @@ a.entry:hover .entry__arrow {
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
     /*
-     * The timeline only sees the top 65% of the screen (a 35% inset at the bottom), so "entering" means crossing
-     * a reading line about two thirds down: the line draws as it passes that point, not as it scrolls in.
+     * The timeline ignores the bottom of the screen (an inset), so "entering" means crossing a reading line near
+     * the bottom: the line draws as it passes that point, not as it scrolls in. The cap keeps the line low enough
+     * on tall screens that the last step, which can only scroll to about 225px above the bottom, still crosses it
+     * and finishes fading in (inset plus the fade below must stay under that).
      */
+    .journey {
+      --journey-line: min(16%, 8rem);
+    }
+
     .journey__connector {
       animation: journey-draw linear both;
-      animation-timeline: view(block 0% 35%);
+      animation-timeline: view(block 0% var(--journey-line));
       animation-range: entry 0% entry 100%;
     }
 
     .journey__step:not([data-current]) .journey__marker {
       animation: journey-reach linear both;
-      animation-timeline: view(block 0% 35%);
+      animation-timeline: view(block 0% var(--journey-line));
       animation-range: entry 0% entry 100%;
     }
   }
@@ -638,7 +644,7 @@ a.entry:hover .entry__arrow {
     .journey__marker,
     .journey__open {
       view-timeline: --reach block;
-      view-timeline-inset: 0% 35%;
+      view-timeline-inset: 0% var(--journey-line);
     }
 
     .journey__chapter,
@@ -647,8 +653,8 @@ a.entry:hover .entry__arrow {
     .journey__next {
       animation: journey-appear linear both;
       animation-timeline: --reach;
-      /* About a tenth of a screen of scrolling to fade in fully */
-      animation-range: entry 0% cover 15%;
+      /* A fixed 5rem of scrolling to fade in fully, so the end of the page always has room for it */
+      animation-range: entry 0% cover 5rem;
     }
 
     .journey__step:focus-within :is(.journey__chapter, .journey__text, .journey__extra),
