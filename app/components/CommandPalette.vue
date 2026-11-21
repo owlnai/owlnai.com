@@ -55,7 +55,7 @@ function onAction(value: string) {
 
 <template>
   <Dialog v-model:open="open">
-    <DialogTrigger shortcut="mod+k" class="trigger glass">
+    <DialogTrigger shortcut="mod+k" class="trigger glass" aria-label="Search">
       <svg class="trigger__icon" viewBox="0 0 16 16" aria-hidden="true">
         <circle cx="7" cy="7" r="4.5" />
         <path d="m10.5 10.5 3 3" />
