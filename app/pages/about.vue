@@ -17,11 +17,16 @@ defineOgImage('Site', {
   label: 'About',
 })
 
-// Where each journey step sits, as % across. Left and right alternate, a little uneven so it reads hand-placed.
-const lanes = [41, 59, 43, 57, 40, 60, 44, 56]
-const laneAt = (index: number) => lanes[index % lanes.length]!
-// The last step's path runs straight down, so it "turns" to its own lane
-const nextLaneAt = (index: number) => laneAt(index < milestones.length - 1 ? index + 1 : index)
+// The journey's steps grouped under their chapter headings. Each keeps its index for its stamps and for "now".
+const chapters = milestones.reduce<{ title: string; steps: ((typeof milestones)[number] & { index: number })[] }[]>(
+  (list, item, index) => {
+    if (item.chapter || !list.length) list.push({ title: item.chapter ?? '', steps: [] })
+    list.at(-1)!.steps.push({ ...item, index })
+    return list
+  },
+  [],
+)
+const isNow = (index: number) => index === milestones.length - 1
 
 const tilts = { notepad: 1.5, contributions: -2.5, design: 2, build: -1.5 }
 
@@ -94,61 +99,56 @@ const stampsAt = computed(() => {
 
     <SectionBlock id="journey" title="Journey">
       <!--
-        A path that wanders from step to step. Each step sits in a lane (--lane, % across) with its text on the
-        outer side; the curve to the next step runs through the open middle, so it never crosses any text.
-        Steps group into chapters, with more room between them. The path fades in from the past, draws itself
-        as you scroll, and carries on past "now" to an open dot.
+        One line down the left, from a solid dot where it all started to an open one for what's next. Steps group
+        under chapter headings; each step's card and stamps sit beside its text, or under it on narrow screens.
+        As you scroll, the line fills in down to a reading line near the bottom of the screen, filling each dot
+        it passes.
       -->
-      <Timeline aria-labelledby="journey-title" class="journey">
-        <TimelineItem
-          v-for="(item, index) in milestones"
-          :key="item.year"
-          :status="index === milestones.length - 1 ? 'current' : 'complete'"
-          class="journey__step"
-          :data-side="laneAt(index) < 50 ? 'left' : 'right'"
-          :data-turn="nextLaneAt(index) < laneAt(index) ? 'left' : 'right'"
-          :data-before-chapter="milestones[index + 1]?.chapter ? '' : undefined"
-          :style="{ '--lane': laneAt(index), '--lane-next': nextLaneAt(index) }"
-        >
-          <!-- Where the path begins, a solid dot that the open one at the end answers -->
-          <p v-if="index === 0" class="journey__origin display">It all started here.</p>
-          <h3 v-if="item.chapter" class="journey__chapter display">{{ item.chapter }}</h3>
-          <TimelineMarker class="journey__marker" />
-          <TimelineConnector class="journey__connector">
-            <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-              <path d="M0 0C0 55 100 45 100 100" />
-            </svg>
-          </TimelineConnector>
-          <div class="journey__text">
-            <TimelineTime class="journey__year display" :datetime="item.dateTime">{{ item.year }}</TimelineTime>
-            <TimelineTitle class="journey__title display">{{ item.title }}</TimelineTitle>
-            <TimelineDescription class="journey__desc">{{ item.description }}</TimelineDescription>
-          </div>
-          <!-- Illustrations and travel stamps, in the open space on the other side of the path -->
-          <div v-if="item.widget || stampsAt[index]" class="journey__extra">
-            <HoloCard v-if="item.widget" class="journey__widget" :style="{ '--tilt': `${tilts[item.widget]}deg` }">
-              <JourneyNotepad v-if="item.widget === 'notepad'" />
-              <JourneyContributions v-else-if="item.widget === 'contributions'" />
-              <JourneyDesign v-else-if="item.widget === 'design'" />
-              <JourneyBuild v-else />
-            </HoloCard>
-            <JourneyStamp
-              v-for="(place, n) in stampsAt[index]"
-              :key="place.path"
-              :place="place"
-              :tilt="n % 2 ? 5 : -4"
-            />
-          </div>
-        </TimelineItem>
-      </Timeline>
-      <!-- Past "now" the path keeps going to an open dot: whatever comes next, which points back to the ticket -->
-      <div
-        class="journey journey--next"
-        :data-side="laneAt(milestones.length - 1) < 50 ? 'left' : 'right'"
-        :style="{ '--lane': laneAt(milestones.length - 1) }"
-      >
-        <span class="journey__open" aria-hidden="true" />
-        <a href="#contact" class="journey__next display">What’s next? <span>Say hi</span> ↑</a>
+      <div class="journey">
+        <span class="journey__track" aria-hidden="true" />
+        <span class="journey__fill" aria-hidden="true" />
+        <p class="journey__origin">
+          <span class="journey__dot" aria-hidden="true" />
+          <span class="display">It all started here.</span>
+        </p>
+        <template v-for="chapter in chapters" :key="chapter.title">
+          <h3 v-if="chapter.title" class="journey__chapter display">{{ chapter.title }}</h3>
+          <ol class="journey__steps">
+            <li
+              v-for="item in chapter.steps"
+              :key="item.year"
+              class="journey__step"
+              :data-current="isNow(item.index) ? '' : undefined"
+              :aria-current="isNow(item.index) ? 'step' : undefined"
+            >
+              <span class="journey__dot" aria-hidden="true" />
+              <div class="journey__text">
+                <time class="journey__year" :datetime="item.dateTime">{{ item.year }}</time>
+                <p class="journey__title display">{{ item.title }}</p>
+                <p class="journey__desc">{{ item.description }}</p>
+              </div>
+              <div v-if="item.widget || stampsAt[item.index]" class="journey__extra">
+                <HoloCard v-if="item.widget" class="journey__widget" :style="{ '--tilt': `${tilts[item.widget]}deg` }">
+                  <JourneyNotepad v-if="item.widget === 'notepad'" />
+                  <JourneyContributions v-else-if="item.widget === 'contributions'" />
+                  <JourneyDesign v-else-if="item.widget === 'design'" />
+                  <JourneyBuild v-else />
+                </HoloCard>
+                <JourneyStamp
+                  v-for="(place, n) in stampsAt[item.index]"
+                  :key="place.path"
+                  :place="place"
+                  :tilt="n % 2 ? 5 : -4"
+                />
+              </div>
+            </li>
+          </ol>
+        </template>
+        <!-- Past "now" the line carries on to an open dot: whatever comes next, which points back to the ticket -->
+        <p class="journey__next">
+          <span class="journey__dot" aria-hidden="true" />
+          <a href="#contact" class="display">What’s next? <span>Say hi</span> ↑</a>
+        </p>
       </div>
     </SectionBlock>
   </article>
@@ -232,8 +232,14 @@ const stampsAt = computed(() => {
   border-bottom: 1px solid var(--line);
 }
 
+/* A heading over a list sits in a band like one of its rows: the same room above it as below */
 .block:has(.list) {
+  padding-top: var(--space-row);
   padding-bottom: 0;
+}
+
+.block:has(.list) .block__title {
+  margin-bottom: var(--space-row);
 }
 
 .block:has(.list) .list > li:last-child {
@@ -299,168 +305,132 @@ a.entry:hover .entry__arrow {
 }
 
 /*
- * Journey: a dotted path that wanders between two loose lanes. Each step's dot sits at --lane (% across);
- * its text hangs off the outer side of the dot, and the curve to the next dot runs through the middle.
+ * Journey: one line down the left, text to its right. Every row is the same grid (the line's column, the
+ * text, then the card and stamps), so the dots all sit on the line. The line itself is two spans behind the
+ * dots, a light track and a dark fill, running from the origin's dot to the open dot of what's next.
  */
 .journey {
-  --rail: 1rem;
-  --gap: 1.25rem;
   --dot: 11px;
-  --dot-top: 0.8rem;
-  --path-color: var(--ink-faint);
-  --path: repeating-linear-gradient(to bottom, var(--path-color) 0 4px, transparent 4px 8px);
-  /* How far the path runs from its origin down to the first step */
-  --lead: 10rem;
-  position: relative;
-  padding: 18rem var(--gutter) 0;
-}
-
-.journey__step {
-  --x: calc(var(--lane) * 1%);
-  --x-next: calc(var(--lane-next) * 1%);
-  /* Lets the widgets size themselves in cqi, i.e. % of the step's width, like the lanes */
+  --rail: 1rem;
+  --gap: 1.5rem;
+  /* The origin and what's next are a row of fixed height each, so the line can start and end on their dots */
+  --end-row: 2rem;
+  --pad-top: var(--space-section);
+  --pad-bottom: 5rem;
+  /* Lets narrow layouts follow the journey's own width rather than the screen's */
   container-type: inline-size;
   position: relative;
+  padding: var(--pad-top) var(--gutter) var(--pad-bottom);
+}
+
+.journey__track,
+.journey__fill {
+  position: absolute;
+  top: calc(var(--pad-top) + var(--end-row) / 2);
+  bottom: calc(var(--pad-bottom) + var(--end-row) / 2);
+  left: calc(var(--gutter) + var(--rail) / 2 - 1px);
+  width: 2px;
+  border-radius: 1px;
+}
+
+.journey__track {
+  background: var(--ink-faint);
+}
+
+/* Shown only where the browser can tie it to scrolling, below */
+.journey__fill {
+  display: none;
+  background: var(--ink);
+}
+
+.journey__origin,
+.journey__step,
+.journey__next {
+  --year: 2.25rem;
   display: grid;
-  /* Puts the centre of the dot column exactly at --x */
-  grid-template-columns: calc(var(--x) - var(--rail) / 2 - var(--gap)) var(--rail) minmax(0, 1fr);
+  grid-template-columns: var(--rail) minmax(0, 26rem) minmax(0, 1fr);
   column-gap: var(--gap);
-  padding-bottom: 5.5rem;
-  outline-offset: 6px;
 }
 
-/* Steps in the same chapter sit closer; a new chapter gets room for its heading */
-.journey__step[data-before-chapter] {
-  padding-bottom: 12rem;
-}
-
-/* A chapter heading hangs above its first step, on the text side, in the room left before it */
-.journey__chapter {
-  position: absolute;
-  bottom: calc(100% + 3rem);
-  left: calc(var(--x) + var(--rail) / 2 + var(--gap));
-  max-width: 22rem;
-  color: var(--ink);
-  font-size: clamp(1.75rem, 3.2vw, 2.5rem);
-  letter-spacing: -0.045em;
-  line-height: 1.05;
-  text-wrap: balance;
-}
-
-.journey__step[data-side='left'] .journey__chapter {
-  right: calc(100% - var(--x) + var(--rail) / 2 + var(--gap));
-  left: auto;
-  text-align: end;
-}
-
-.journey__text {
-  grid-row: 1;
-  grid-column: 1;
-  justify-self: end;
-  max-width: 22rem;
-  text-align: end;
-}
-
-.journey__step[data-side='right'] .journey__text {
-  grid-column: 3;
-  justify-self: start;
-  text-align: start;
-}
-
-.journey__year {
-  display: block;
-  margin-bottom: 0.6rem;
-  color: var(--ink-faint);
-  font-family: var(--font-mono);
-  font-size: 2.25rem;
-  font-weight: 500;
-  font-feature-settings: 'zero';
-  letter-spacing: -0.04em;
-  line-height: 1;
-}
-
-.journey__step[data-current] .journey__year {
-  color: var(--ink);
-}
-
-.journey__step[data-current] .journey__year::after {
-  content: 'Now' / '';
-  margin-inline-start: 0.6rem;
-  color: var(--accent);
-  font-family: var(--font-mono);
-  font-size: 0.625rem;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  vertical-align: 0.35em;
-}
-
-/* The path runs down from where it all started to the first step */
-.journey__step:first-child::before {
-  content: '';
-  position: absolute;
-  bottom: calc(100% - var(--dot-top) + 4px);
-  left: calc(var(--x) - 0.75px);
-  width: 1.5px;
-  height: var(--lead);
-  background: var(--path);
-}
-
-/*
- * The origin: a solid dot at the top of that line, its words beside it on the side away from the first
- * chapter heading. Its box is centred on the dot (translate 50%) so the line meets it like any other step.
- */
-.journey__origin {
-  position: absolute;
-  bottom: calc(100% - var(--dot-top) + 4px + var(--lead) + 4px + var(--dot) / 2);
-  left: calc(var(--x) - var(--dot) / 2);
-  display: flex;
-  gap: calc(var(--rail) / 2 - var(--dot) / 2 + var(--gap));
+.journey__origin,
+.journey__next {
+  height: var(--end-row);
   align-items: center;
+  margin: 0;
   color: var(--ink-soft);
   font-size: 1.375rem;
   letter-spacing: -0.03em;
   line-height: 1.2;
   white-space: nowrap;
-  translate: 0 50%;
 }
 
-.journey__origin::before {
-  content: '';
-  flex: none;
-  width: var(--dot);
-  height: var(--dot);
-  border-radius: 50%;
-  background: var(--ink-faint);
+.journey__origin > :not(.journey__dot),
+.journey__next > a {
+  grid-column: 2 / -1;
 }
 
-.journey__step[data-side='right'] .journey__origin {
-  right: calc(100% - var(--x) - var(--dot) / 2);
-  left: auto;
-  flex-direction: row-reverse;
-}
-
-.journey__marker {
+.journey__dot {
   position: relative;
-  grid-column: 2;
   grid-row: 1;
+  grid-column: 1;
   justify-self: center;
   width: var(--dot);
   height: var(--dot);
-  margin-top: var(--dot-top);
   border: 1.5px solid var(--ink-faint);
   border-radius: 50%;
   background: var(--paper);
 }
 
-.journey__step[data-current] .journey__marker {
+/* Where it all started: a solid dot, which the open one at the end answers */
+.journey__origin .journey__dot {
+  border: 0;
+  background: var(--ink-faint);
+}
+
+/* What's next: an open dot, a lighter ring with nothing inside */
+.journey__next .journey__dot {
+  border-color: var(--line-strong);
+}
+
+.journey__chapter {
+  max-width: 26rem;
+  margin: 3rem 0 1.5rem;
+  padding-inline-start: calc(var(--rail) + var(--gap));
+  color: var(--ink);
+  font-size: clamp(1.75rem, 3.2vw, 2.5rem);
+  letter-spacing: -0.045em;
+  line-height: 1.05;
+  text-wrap: balance;
+  box-sizing: content-box;
+}
+
+.journey__chapter:first-of-type {
+  margin-top: 2.5rem;
+}
+
+.journey__steps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.journey__step {
+  padding-bottom: 2.5rem;
+}
+
+/* Level with the middle of the year */
+.journey__step .journey__dot {
+  margin-top: calc(var(--year) / 2 - var(--dot) / 2);
+}
+
+.journey__step[data-current] .journey__dot {
   border-color: var(--accent);
   background: var(--accent);
   box-shadow: 0 0 0 4px var(--accent-wash);
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .journey__step[data-current] .journey__marker::after {
+  .journey__step[data-current] .journey__dot::after {
     content: '';
     position: absolute;
     inset: -1.5px;
@@ -481,113 +451,78 @@ a.entry:hover .entry__arrow {
   }
 }
 
-/*
- * From this step's dot to the next one: a box spanning the two lanes, holding an S-curve that stretches to fit.
- * non-scaling-stroke keeps the line 1px and the dots round however much the box is stretched.
- */
-.journey__connector {
-  position: absolute;
-  top: calc(var(--dot-top) + var(--dot) + 4px);
-  bottom: calc(4px - var(--dot-top));
-  left: min(var(--x), var(--x-next));
-  width: calc(max(var(--x), var(--x-next)) - min(var(--x), var(--x-next)));
-  pointer-events: none;
-}
-
-.journey__connector svg {
-  display: block;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-}
-
-.journey__step[data-turn='left'] .journey__connector svg {
-  scale: -1 1;
-}
-
-.journey__connector path {
-  fill: none;
-  stroke: var(--path-color);
-  stroke-dasharray: 4 4;
-  stroke-width: 1.5;
-  vector-effect: non-scaling-stroke;
-}
-
-/* After "now" the path carries straight on, down to the open dot of what's next */
-.journey__step[data-current] {
-  padding-bottom: 0;
-}
-
-.journey__step[data-current] .journey__connector {
-  /* Ends just above the open dot: the next block's top padding, plus half its row, less half the dot */
-  bottom: calc(var(--dot) / 2 + 4px - var(--next-gap) - var(--next-row) / 2);
-  left: calc(var(--x) - 0.75px);
-  width: 1.5px;
-  background: var(--path);
-}
-
-.journey__step[data-current] .journey__connector svg {
-  display: none;
-}
-
-/* What's next: an open, dashed dot on the same lane, a line pointing back up to the ticket, then the path fades */
-.journey--next {
-  --x: calc(var(--lane) * 1%);
-  display: grid;
-  grid-template-columns: calc(var(--x) - var(--rail) / 2 - var(--gap)) var(--rail) minmax(0, 1fr);
-  grid-template-rows: var(--next-row);
-  align-items: center;
-  column-gap: var(--gap);
-  padding-top: var(--next-gap);
-  padding-bottom: 7rem;
-}
-
-.journey,
-.journey--next {
-  --next-gap: 3.5rem;
-  --next-row: 1.75rem;
-}
-
-.journey__open {
-  position: relative;
+.journey__text {
   grid-row: 1;
   grid-column: 2;
-  justify-self: center;
-  width: var(--dot);
-  height: var(--dot);
-  border: 1.5px dashed var(--ink-faint);
-  border-radius: 50%;
 }
 
-.journey__open::after {
-  content: '';
-  position: absolute;
-  top: calc(100% + 4px);
-  left: calc(50% - 0.75px);
-  width: 1.5px;
-  height: 4rem;
-  background: var(--path);
-  mask-image: linear-gradient(#000, transparent);
+.journey__year {
+  display: block;
+  margin-bottom: 0.6rem;
+  color: var(--ink-faint);
+  font-family: var(--font-mono);
+  font-size: var(--year);
+  font-weight: 500;
+  font-feature-settings: 'zero';
+  letter-spacing: -0.04em;
+  line-height: 1;
 }
 
-.journey__next {
-  grid-row: 1;
-  grid-column: 3;
-  justify-self: start;
-  color: var(--ink-soft);
+.journey__step[data-current] .journey__year {
+  color: var(--ink);
+}
+
+.journey__step[data-current] .journey__year::after {
+  content: 'Now' / '';
+  margin-inline-start: 0.6rem;
+  color: var(--accent);
+  font-size: 0.625rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  vertical-align: 0.35em;
+}
+
+.journey__title {
+  margin: 0 0 0.45rem;
   font-size: 1.375rem;
   letter-spacing: -0.03em;
-  line-height: var(--next-row);
-  white-space: nowrap;
+  line-height: 1.3;
+}
+
+.journey__desc {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+/* Illustrations and travel stamps, beside the text */
+.journey__extra {
+  grid-row: 1;
+  grid-column: 3;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 1.25rem 1.5rem;
+  padding-top: 0.25rem;
+}
+
+/* The card inside HoloCard, which tilts and carries the foil; :deep because it isn't HoloCard's root */
+.journey__extra :deep(.journey__widget) {
+  max-width: 100%;
+  padding: 1rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 0.9rem;
+  background: var(--raised);
+  box-shadow: 0 12px 30px -20px var(--shadow);
+  rotate: var(--tilt, 0deg);
+}
+
+.journey__next a {
   transition: color 0.2s;
 }
 
-.journey--next[data-side='left'] .journey__next {
-  grid-column: 1;
-  justify-self: end;
-}
-
-.journey__next span {
+.journey__next a span {
   color: var(--ink);
   text-decoration: underline;
   text-decoration-color: var(--line-strong);
@@ -596,80 +531,39 @@ a.entry:hover .entry__arrow {
   transition: text-decoration-color 0.2s;
 }
 
-.journey__next:hover span {
+.journey__next a:hover span {
   text-decoration-color: currentColor;
 }
 
 /*
- * Where the browser supports scroll-driven animation, the path draws itself downward as you read and each dot
- * fills in once the line reaches it. Without support, or with reduced motion, everything is simply there.
+ * Scroll progress: where the browser supports scroll-driven animation, the track turns light and a dark fill
+ * runs down it to a reading line near the bottom of the screen, filling each dot as it passes. The timelines
+ * ignore the bottom of the screen (an inset), so "entering" means crossing that reading line. Over the fill's
+ * entry-crossing range it is revealed one pixel per pixel scrolled, so its end stays on the reading line.
+ * Without support, or with reduced motion, the line is simply drawn.
  */
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
-    /*
-     * The timeline ignores the bottom of the screen (an inset), so "entering" means crossing a reading line near
-     * the bottom: the line draws as it passes that point, not as it scrolls in. The cap keeps the line low enough
-     * on tall screens that the last step, which can only scroll to about 225px above the bottom, still crosses it
-     * and finishes fading in (inset plus the fade below must stay under that).
-     */
     .journey {
       --journey-line: min(16%, 8rem);
     }
 
-    .journey__connector {
-      animation: journey-draw linear both;
-      animation-timeline: view(block 0% var(--journey-line));
-      animation-range: entry 0% entry 100%;
+    .journey__track {
+      background: var(--line);
     }
 
-    .journey__step:not([data-current]) .journey__marker {
+    .journey__fill {
+      display: block;
+      animation: journey-draw linear both;
+      animation-timeline: view(block 0% var(--journey-line));
+      animation-range: entry-crossing 0% entry-crossing 100%;
+    }
+
+    .journey__step:not([data-current]) .journey__dot {
       animation: journey-reach linear both;
       animation-timeline: view(block 0% var(--journey-line));
       animation-range: entry 0% entry 100%;
     }
-  }
-}
-
-/*
- * Each step waits for the line: its heading, words, cards and stamps rise in once the drawing reaches its dot,
- * i.e. once the dot crosses the same reading line. The dot publishes that moment as a named timeline the rest
- * of the step can follow. Hidden here means transparent only, so screen readers still read every step, and
- * anything focused by keyboard shows at once.
- */
-@supports (animation-timeline: view()) and (timeline-scope: --a) {
-  @media (prefers-reduced-motion: no-preference) {
-    .journey__step,
-    .journey--next {
-      timeline-scope: --reach;
-    }
-
-    .journey__marker,
-    .journey__open {
-      view-timeline: --reach block;
-      view-timeline-inset: 0% var(--journey-line);
-    }
-
-    .journey__chapter,
-    .journey__text,
-    .journey__extra,
-    .journey__next {
-      animation: journey-appear linear both;
-      animation-timeline: --reach;
-      /* A fixed 5rem of scrolling to fade in fully, so the end of the page always has room for it */
-      animation-range: entry 0% cover 5rem;
-    }
-
-    .journey__step:focus-within :is(.journey__chapter, .journey__text, .journey__extra),
-    .journey__next:focus {
-      animation: none;
-    }
-  }
-}
-
-@keyframes journey-appear {
-  from {
-    opacity: 0;
-    translate: 0 0.75rem;
   }
 }
 
@@ -684,59 +578,42 @@ a.entry:hover .entry__arrow {
 
 @keyframes journey-reach {
   from {
+    border-color: var(--ink-faint);
     background: var(--paper);
   }
   to {
-    background: var(--ink-faint);
+    border-color: var(--ink);
+    background: var(--ink);
   }
 }
 
-.journey__title {
-  font-size: 1.375rem;
-  letter-spacing: -0.03em;
-  line-height: 1.3;
-}
+/* Narrow: the card and stamps go under the step's text, and everything gets a little smaller */
+@container (max-width: 44rem) {
+  .journey > * {
+    --gap: 1rem;
+  }
 
-.journey__desc {
-  margin-top: 0.35rem;
-  color: var(--ink-soft);
-  font-size: 0.9375rem;
-  line-height: 1.5;
-}
+  .journey__origin,
+  .journey__step,
+  .journey__next {
+    --year: 1.75rem;
+    grid-template-columns: var(--rail) minmax(0, 1fr);
+  }
 
-/*
- * Widgets go on the side away from the text, kept clear of the curve: it only runs between this lane and
- * the next, so the space beyond both of them is free.
- */
-.journey__extra {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  gap: 1.25rem 1.5rem;
-  grid-row: 1;
-  grid-column: 1;
-  justify-self: start;
-  justify-content: flex-start;
-  max-width: calc(min(var(--lane), var(--lane-next)) * 1cqi - var(--gap) * 2);
-  padding-top: 0.25rem;
-}
+  .journey__origin,
+  .journey__next {
+    font-size: 1.125rem;
+  }
 
-.journey__step[data-side='left'] .journey__extra {
-  grid-column: 3;
-  justify-self: end;
-  justify-content: flex-end;
-  max-width: calc((100 - max(var(--lane), var(--lane-next))) * 1cqi - var(--gap) * 2);
-}
+  .journey__chapter {
+    font-size: 1.75rem;
+  }
 
-/* The card inside HoloCard, which tilts and carries the foil; :deep because it isn't HoloCard's root */
-.journey__extra :deep(.journey__widget) {
-  max-width: 100%;
-  padding: 1rem;
-  border: 1px solid var(--line-strong);
-  border-radius: 0.9rem;
-  background: var(--raised);
-  box-shadow: 0 12px 30px -20px var(--shadow);
-  rotate: var(--tilt, 0deg);
+  .journey__extra {
+    grid-row: 2;
+    grid-column: 2;
+    padding-top: 1.5rem;
+  }
 }
 
 @media (max-width: 56rem) {
@@ -759,99 +636,6 @@ a.entry:hover .entry__arrow {
     position: static;
     width: min(100% - var(--gutter) * 2, 20rem);
     margin: 0 auto 0.5rem;
-  }
-}
-
-/* Too narrow for two lanes: the path straightens into a rail along the left, text to its right */
-@media (max-width: 40rem) {
-  .journey {
-    --gap: 1rem;
-    --dot-top: 0.4rem;
-    --lead: 8rem;
-    padding-top: 11rem;
-  }
-
-  .journey__origin,
-  .journey__step[data-side='right'] .journey__origin {
-    right: auto;
-    left: calc(var(--x) - var(--dot) / 2);
-    flex-direction: row;
-    font-size: 1.125rem;
-  }
-
-  .journey__step {
-    --x: calc(var(--rail) / 2);
-    --x-next: var(--x);
-    grid-template-columns: var(--rail) minmax(0, 1fr);
-    padding-bottom: 3.5rem;
-  }
-
-  .journey__step[data-before-chapter] {
-    padding-bottom: 8rem;
-  }
-
-  .journey__chapter,
-  .journey__step[data-side='left'] .journey__chapter {
-    right: auto;
-    bottom: calc(100% + 2rem);
-    left: calc(var(--rail) + var(--gap));
-    font-size: 1.75rem;
-    text-align: start;
-  }
-
-  .journey--next {
-    --x: calc(var(--rail) / 2);
-    grid-template-columns: var(--rail) minmax(0, 1fr);
-    padding-top: var(--next-gap);
-    padding-bottom: 5rem;
-  }
-
-  .journey__open {
-    grid-column: 1;
-  }
-
-  .journey__next,
-  .journey--next[data-side='left'] .journey__next {
-    grid-column: 2;
-    justify-self: start;
-    font-size: 1.125rem;
-  }
-
-  .journey__marker {
-    grid-column: 1;
-  }
-
-  .journey__text,
-  .journey__step[data-side='right'] .journey__text {
-    grid-column: 2;
-    justify-self: start;
-    text-align: start;
-  }
-
-  .journey__year {
-    margin-bottom: 0.4rem;
-    font-size: 1.5rem;
-  }
-
-  .journey__connector {
-    left: calc(var(--x) - 0.75px);
-    width: 1.5px;
-    background: var(--path);
-  }
-
-  .journey__connector svg {
-    display: none;
-  }
-
-  /* Widgets and stamps tuck in under the text */
-  .journey__extra,
-  .journey__step[data-side='left'] .journey__extra {
-    grid-row: 2;
-    grid-column: 2;
-    justify-self: start;
-    justify-content: flex-start;
-    max-width: none;
-    padding-top: 1.75rem;
   }
 }
 </style>

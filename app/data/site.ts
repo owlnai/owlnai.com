@@ -149,7 +149,7 @@ export interface Milestone {
 export const milestones: Milestone[] = [
   {
     year: 'Before',
-    chapter: 'Learning in the open',
+    chapter: 'Growing up online',
     title: 'Curiosity',
     description: 'Editing wikis as a teenager and building my first web pages by hand. Sharing what I knew felt natural.',
     widget: 'notepad',
@@ -164,16 +164,24 @@ export const milestones: Milestone[] = [
   {
     year: '2019',
     dateTime: '2019',
+    chapter: 'Making it work',
     title: 'Going freelance',
     description:
-      'Built shops, portfolios and apps for clients as a freelance developer and designer, and co-founded a music and video startup for artists.',
+      'Went freelance as a developer and designer: an online shop for a local retailer, a cinematographer’s portfolio with its own CMS, and an app for a pet adoption agency.',
+  },
+  {
+    year: '2020',
+    dateTime: '2020',
+    title: 'Webspace',
+    description:
+      'Co-founded Webspace, a San Francisco music and video startup for artists, and built a video editor that ran in the browser.',
   },
   {
     year: '2021',
     dateTime: '2021',
     title: 'Giving back',
     description:
-      'Built isnuxt3ready, a community guide to which modules were ready for Nuxt 3. It later became part of the official Nuxt docs.',
+      'Built isnuxt3ready, a community guide that tracked over a hundred modules on their way to Nuxt 3. It later became part of the official Nuxt docs.',
   },
   {
     year: '2022',
