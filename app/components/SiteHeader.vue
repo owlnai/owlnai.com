@@ -41,7 +41,7 @@ watch(active, () => nextTick(measure))
     <!-- Who: my name, and what I'm listening to when something is playing -->
     <div class="pill glass mark">
       <NuxtLink to="/" class="mark__home" aria-label="owlnai, home">
-        <img src="/icon.png" alt="" width="28" height="28" class="mark__avatar" />
+        <img src="/avatar-128.webp" alt="" width="28" height="28" class="mark__avatar" />
         owlnai
       </NuxtLink>
       <MusicIsland />

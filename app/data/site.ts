@@ -23,7 +23,7 @@ export const brands = {
     logo: '/mrm.svg',
     href: 'https://www.mrm.com',
   },
-  owlnai: { name: 'owlnai', logo: '/icon.png', href: '/about' },
+  owlnai: { name: 'owlnai', logo: '/avatar-128.webp', href: '/about' },
   sector9: {
     name: 'sector9',
     logo: 'https://github.com/section9-studio.png?size=96',

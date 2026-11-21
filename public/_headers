@@ -1,0 +1,25 @@
+# Photos and icons in public/ are not fingerprinted, so cache them for a day and revalidate in the background.
+# Each prerendered page keeps its _payload.json under the same prefix; those must stay revalidated on every load.
+/uses/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+/uses/_payload.json
+  ! Cache-Control
+  Cache-Control: public, max-age=0, must-revalidate
+/places/:place/:photo
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+/places/:place/_payload.json
+  ! Cache-Control
+  Cache-Control: public, max-age=0, must-revalidate
+/icon.png
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+/avatar-128.webp
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+/avatar-460.webp
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+/mrm.svg
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+/favicon.ico
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+# Resized copies of the photos, written by @nuxt/image while the pages prerender
+/_ipx/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800

@@ -14,7 +14,9 @@ const { card, onMove, onLeave } = useCardTilt({ x: 5, y: 7 })
       <div ref="card" class="ticket__card">
         <div class="ticket__main">
           <figure class="ticket__photo">
-            <NuxtImg src="/icon.png" :alt="`Portrait of ${person.name}`" width="460" height="460" />
+            <!-- A WebP copy of icon.png (12 KB against 139 KB). Not <NuxtImg>: its resizer can only write PNG
+                 here, which came out larger than the original. -->
+            <img src="/avatar-460.webp" :alt="`Portrait of ${person.name}`" width="460" height="460" />
             <span class="ticket__slot" aria-hidden="true" />
           </figure>
 
