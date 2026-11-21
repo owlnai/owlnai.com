@@ -107,7 +107,11 @@ export default defineNuxtConfig({
       // ViteHub 0.3 always adds a draft-preview plugin that imports server/content.ts, which would bundle
       // Comark and its UI preset (about 2 MB gzipped) into the Worker. Previews are for editable collections,
       // which this site does not have, and every content page is prerendered.
-      nitro.options.plugins = nitro.options.plugins.filter((plugin) => !plugin.endsWith('.vitehub/content/preview.mjs'))
+      const kept = nitro.options.plugins.filter((plugin) => !plugin.endsWith('.vitehub/content/preview.mjs'))
+      if (kept.length === nitro.options.plugins.length) {
+        throw new Error('ViteHub draft-preview plugin not found: check the path filter in nuxt.config.ts before the Worker grows by 2 MB')
+      }
+      nitro.options.plugins = kept
     },
   },
   app: {
