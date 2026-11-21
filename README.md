@@ -1,75 +1,49 @@
-# Nuxt 3 Minimal Starter
+# owlnai.com
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+The personal site of Unai Mengual: writing, notes, places and the tools he uses.
+
+Built with a Nuxt 5 nightly and Vue 3. Every page is prerendered, and the site is deployed as a
+Cloudflare Worker through [ViteHub](https://vitehub.dev). Content is Markdown in `content/`.
 
 ## Setup
 
-Make sure to install the dependencies:
+You need Node 24 and pnpm 12. Other package managers do not read `pnpm-workspace.yaml`, which pins the
+Nuxt nightly, so they install the wrong versions.
 
 ```bash
-# npm
-npm install
-
-# pnpm
 pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
 ```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
 
 ```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm run dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
+pnpm dev
 ```
 
-## Production
+The dev server runs on `http://localhost:3000`. To show the "now playing" card locally, copy
+`.env.example` to `.env` and fill in the Last.fm values.
 
-Build the application for production:
+## Checking a change
 
 ```bash
-# npm
-npm run build
-
-# pnpm
-pnpm run build
-
-# yarn
-yarn build
-
-# bun
-bun run build
+pnpm check
 ```
 
-Locally preview production build:
+This runs the type check, the tests and a production build. The build fails if any page cannot be
+prerendered, including when a content file has invalid frontmatter.
+
+To try the built Worker locally, build first and then preview:
 
 ```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm run preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
+pnpm build
 ```
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+```bash
+pnpm preview
+```
+
+## Deploying
+
+Cloudflare Workers Builds builds with `pnpm build` and deploys with `pnpm exec nitro deploy --prebuilt`.
+The Last.fm user for the "now playing" card is set in `wrangler.jsonc`; the API key is a Worker secret
+(`npx wrangler secret put NUXT_LASTFM_API_KEY --name owlnai-com`).
+
+How the project is put together, and how to add content, is in [AGENTS.md](AGENTS.md).
