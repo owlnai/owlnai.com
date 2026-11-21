@@ -23,7 +23,7 @@ const laneAt = (index: number) => lanes[index % lanes.length]!
 // The last step's path runs straight down, so it "turns" to its own lane
 const nextLaneAt = (index: number) => laneAt(index < milestones.length - 1 ? index + 1 : index)
 
-const tilts = { contributions: -2.5, design: 2, here: -1.5 }
+const tilts = { notepad: 1.5, contributions: -2.5, design: 2, build: -1.5 }
 
 // Every trip becomes a stamp on the step for its year (or the latest step before it)
 // Oldest first, so each step's stamps read in the order of the trips
@@ -64,7 +64,7 @@ const stampsAt = computed(() => {
         </section>
 
         <section class="block" aria-labelledby="names-title">
-          <h2 id="names-title" class="block__title display">Three names</h2>
+          <h2 id="names-title" class="block__title display">What I run</h2>
           <ul class="list">
             <li v-for="name in names" :key="name.name">
               <a :href="name.href" class="entry entry--logo">
@@ -127,9 +127,10 @@ const stampsAt = computed(() => {
           <!-- Illustrations and travel stamps, in the open space on the other side of the path -->
           <div v-if="item.widget || stampsAt[index]" class="journey__extra">
             <HoloCard v-if="item.widget" class="journey__widget" :style="{ '--tilt': `${tilts[item.widget]}deg` }">
-              <JourneyContributions v-if="item.widget === 'contributions'" />
+              <JourneyNotepad v-if="item.widget === 'notepad'" />
+              <JourneyContributions v-else-if="item.widget === 'contributions'" />
               <JourneyDesign v-else-if="item.widget === 'design'" />
-              <JourneyHere v-else />
+              <JourneyBuild v-else />
             </HoloCard>
             <JourneyStamp
               v-for="(place, n) in stampsAt[index]"
@@ -184,7 +185,8 @@ const stampsAt = computed(() => {
   align-self: start;
   position: sticky;
   top: 4.5rem;
-  margin: var(--gutter);
+  /* No top margin: the lanyard's strap hangs from the border above */
+  margin: 0 var(--gutter) var(--gutter);
 }
 
 .about::after {
@@ -756,7 +758,7 @@ a.entry:hover .entry__arrow {
   .infobox {
     position: static;
     width: min(100% - var(--gutter) * 2, 20rem);
-    margin: 2rem auto 0.5rem;
+    margin: 0 auto 0.5rem;
   }
 }
 

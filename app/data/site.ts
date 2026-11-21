@@ -141,7 +141,7 @@ export interface Milestone {
   // Set on the first step of a chapter; the journey shows it as a heading and leaves more room before it
   chapter?: string
   // A small illustration beside the step (app/components/journey/). Places add travel stamps on their own.
-  widget?: 'contributions' | 'design' | 'here'
+  widget?: 'notepad' | 'contributions' | 'design' | 'build'
 }
 
 // The journey so far, oldest first. The last step is where I am now.
@@ -152,6 +152,7 @@ export const milestones: Milestone[] = [
     chapter: 'Learning in the open',
     title: 'Curiosity',
     description: 'Editing wikis as a teenager and building my first web pages by hand. Sharing what I knew felt natural.',
+    widget: 'notepad',
   },
   {
     year: '2016',
@@ -201,6 +202,6 @@ export const milestones: Milestone[] = [
     dateTime: '2026',
     title: 'Songbird Labs',
     description: 'Building Roblox tools that help creators make their worlds, and meeting the community in person.',
-    widget: 'here',
+    widget: 'build',
   },
 ]
