@@ -1,6 +1,6 @@
 import { defineEventHandler } from 'nuxt/server'
 import { defineCachedFunction } from 'vite-hub/cache'
-import { openSource } from '../../app/data/site'
+import { openSource } from '~~/app/data/site'
 import { fetchJson, githubHeaders, type ServerEvent } from '../utils/fetch-json'
 import { getOwnRepos } from '../utils/github'
 

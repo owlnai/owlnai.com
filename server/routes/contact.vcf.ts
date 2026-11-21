@@ -1,5 +1,5 @@
 import { defineEventHandler } from 'nuxt/server'
-import { person, socials } from '../../app/data/site'
+import { person, socials } from '~~/app/data/site'
 
 // The "Save contact" button on the About page: a vCard with my name, site and social profiles
 export default defineEventHandler(() => {

@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { person } from '~/data/site'
 
-const year = new Date().getFullYear()
+// Read once when the page renders and carried to the client in the payload, so hydration
+// never sees a different year (a page prerendered on 31 December and opened on 1 January)
+const year = useState('footer-year', () => new Date().getFullYear())
 </script>
 
 <template>
