@@ -30,6 +30,15 @@ defineOgImage(
   },
   { extension: 'jpeg' },
 )
+// The small share card shows a square crop of the cover instead of my photo. Asking for it here, while the
+// page prerenders, has @nuxt/image write the file to /_ipx/.
+const image = useImage()
+if (place.value.cover) {
+  // The file sits under a folder named `fit_cover&s_460x460`; Workers redirects a raw `&` in the path to `%26`,
+  // and a share preview may not follow that redirect, so link the encoded path
+  const crop = image(place.value.cover, { width: 460, height: 460, fit: 'cover' }).replaceAll('&', '%26')
+  useHead({ meta: [{ key: 'small-card-image', name: 'small-card-image', content: new URL(crop, useSiteConfig().url).href }] })
+}
 </script>
 
 <template>

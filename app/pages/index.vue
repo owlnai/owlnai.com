@@ -30,12 +30,11 @@ const starCount = new Intl.NumberFormat('en', { notation: 'compact', maximumFrac
 useSeoMeta({
   title: 'Unai Mengual',
   titleTemplate: '%s · owlnai',
-  description:
-    'Unai Mengual, owlnai online. Full-stack developer in Spain, founder of the web design studio sector9 and of Songbird Labs, Roblox tools that empower creators.',
+  description: 'Notes, writing, trips and the things I build for the web.',
 })
 defineOgImage('Site', {
   title: 'Unai Mengual',
-  description: 'Full-stack developer in Spain. Nuxt, Vue, open source and a soft spot for wikis.',
+  description: 'Building for the web from Spain. Nuxt, Vue and open source.',
   label: 'owlnai',
 })
 </script>
