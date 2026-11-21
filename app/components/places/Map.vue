@@ -103,16 +103,121 @@ const at = (p: { x: number; y: number }) => ({
   top: `${((p.y - view.value.y) / view.value.h) * 100}%`,
 })
 
-// One arc from home to each place, bowing upward, more for longer trips
-const arcs = computed(() =>
-  pins.value.map((to) => {
-    const lift = Math.hypot(to.x - origin.x, to.y - origin.y) * 0.4
-    return {
-      path: to.path,
-      d: `M${origin.x} ${origin.y}Q${(origin.x + to.x) / 2} ${Math.min(origin.y, to.y) - lift} ${to.x} ${to.y}`,
+type Point = { x: number; y: number }
+
+// One route from home to each place, fanning out from home: each leaves turned away from its straight line,
+// more for longer trips, then settles onto that line before it arrives. So that no route runs over a place or
+// along another route, each tries turns up to TURN_MAX either way and keeps the one that costs least (see
+// `cost`) given where the others go, longest trips first, over a few rounds.
+const TURN_MAX = 1.2
+// Points compared along each route, close enough that a pin can't slip between two of them
+const SAMPLES = 32
+// Routes leaving home closer together than this, in radians, start to cost
+const GAP = 0.25
+
+const wrap = (angle: number) => Math.atan2(Math.sin(angle), Math.cos(angle))
+const near = (p: Point, q: Point) => Math.hypot(p.x - q.x, p.y - q.y)
+
+const arcs = computed(() => {
+  // How close a route may pass another place, a share of the frame so it holds at any zoom
+  const margin = view.value.w * 0.022
+
+  // Each route's straight line from home: length, direction u, normal n (u turned clockwise on screen) and
+  // bearing (anticlockwise from east)
+  const lines = pins.value.map((to) => {
+    const dx = to.x - origin.x
+    const dy = to.y - origin.y
+    const length = Math.hypot(dx, dy) || 1
+    const u = { x: dx / length, y: dy / length }
+    return { to, length, u, n: { x: -u.y, y: u.x }, bearing: Math.atan2(-dy, dx) }
+  })
+  const longest = Math.max(1, ...lines.map((line) => line.length))
+  const mean = Math.atan2(
+    lines.reduce((sum, line) => sum + Math.sin(line.bearing), 0),
+    lines.reduce((sum, line) => sum + Math.cos(line.bearing), 0),
+  )
+  // Left alone, a route turns outward from the middle of the bundle; a lone route bows toward the top of the map.
+  // Turns are anticlockwise-positive.
+  const side = lines.map((line) =>
+    lines.length > 1 ? Math.sign(wrap(line.bearing - mean)) || 1 : line.n.y <= 0 ? -1 : 1,
+  )
+  // The turn each route would take on its own, from about 10° for the closest trip to 35° for the farthest
+  const prefer = lines.map((line) => 0.17 + 0.44 * (line.length / longest))
+
+  // A cubic that leaves home along the turned direction and arrives along the straight line
+  const shape = (i: number, turn: number) => {
+    const { to, length, u } = lines[i]!
+    const lead = { x: u.x * Math.cos(turn) + u.y * Math.sin(turn), y: -u.x * Math.sin(turn) + u.y * Math.cos(turn) }
+    const c1 = { x: origin.x + lead.x * length * 0.42, y: origin.y + lead.y * length * 0.42 }
+    const c2 = { x: to.x - u.x * length * 0.3, y: to.y - u.y * length * 0.3 }
+    const at = (t: number) => {
+      const s = 1 - t
+      return {
+        x: s ** 3 * origin.x + 3 * s * s * t * c1.x + 3 * s * t * t * c2.x + t ** 3 * to.x,
+        y: s ** 3 * origin.y + 3 * s * s * t * c1.y + 3 * s * t * t * c2.y + t ** 3 * to.y,
+      }
     }
-  }),
-)
+    // Rounded, since the server and the browser can disagree in the last digits of the trigonometry, which
+    // would otherwise show as a hydration mismatch
+    const r = (v: number) => Math.round(v * 100) / 100
+    return {
+      d: `M${r(origin.x)} ${r(origin.y)}C${r(c1.x)} ${r(c1.y)} ${r(c2.x)} ${r(c2.y)} ${r(to.x)} ${r(to.y)}`,
+      turn,
+      points: Array.from({ length: SAMPLES + 1 }, (_, k) => at(k / SAMPLES)),
+    }
+  }
+  type Shape = ReturnType<typeof shape>
+
+  // Every route shares home, so the first stretch of each is left out when checking for routes running together
+  const skip = Math.round(SAMPLES * 0.15)
+
+  // What a route costs with a given shape, against where the others currently go:
+  // - straying from its preferred turn, or turning the other way
+  // - passing over or close to another place
+  // - leaving home at nearly the same angle as another route
+  // - running alongside another route (crossing one is fine, sharing a stretch is not)
+  const cost = (i: number, shaped: Shape, others: Shape[]) => {
+    let total = 10 * ((Math.abs(shaped.turn) - prefer[i]!) / 0.3) ** 2
+    if (Math.abs(shaped.turn) > 0.02 && Math.sign(shaped.turn) !== side[i]) total += 3
+    for (let j = 0; j < lines.length; j++) {
+      if (j === i) continue
+      const pin = lines[j]!.to
+      let closest = Infinity
+      for (let k = 2; k <= SAMPLES - 2; k++) closest = Math.min(closest, near(shaped.points[k]!, pin))
+      if (closest < margin) total += 100 + (400 * (margin - closest)) / margin
+      else if (closest < margin * 2) total += (10 * (margin * 2 - closest)) / margin
+
+      const other = others[j]!
+      const apart = Math.abs(wrap(lines[i]!.bearing + shaped.turn - (lines[j]!.bearing + other.turn)))
+      if (apart < GAP) total += 15 * ((GAP - apart) / GAP) ** 2
+
+      let shared = 0
+      for (let k = skip; k <= SAMPLES; k++) {
+        const p = shaped.points[k]!
+        if (other.points.some((q, l) => l >= skip && near(p, q) < margin * 0.6)) shared++
+      }
+      total += (300 * shared) / (SAMPLES - skip)
+    }
+    return total
+  }
+
+  const shapes = lines.map((_, i) => shape(i, side[i]! * prefer[i]!))
+  const order = lines.map((_, i) => i).sort((a, b) => lines[b]!.length - lines[a]!.length)
+  for (let round = 0; round < 4; round++) {
+    for (const i of order) {
+      let best = shapes[i]!
+      let bestCost = cost(i, best, shapes)
+      for (let turn = -TURN_MAX; turn <= TURN_MAX; turn += 0.035) {
+        const shaped = shape(i, turn)
+        const total = cost(i, shaped, shapes)
+        if (total < bestCost) [best, bestCost] = [shaped, total]
+      }
+      shapes[i] = best
+    }
+  }
+
+  return shapes.map((shaped, i) => ({ path: lines[i]!.to.path, d: shaped.d }))
+})
 
 // The holo gradient runs across the frame, so arcs pick up different colours depending on where they go
 const gradient = useId()
