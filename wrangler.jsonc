@@ -14,6 +14,12 @@
     "NUXT_LASTFM_USER": "owlnai"
   },
   "observability": { "enabled": true },
+  // Pages reach the Worker before the static files so `?card=small` can swap in the small share card
+  // (server/middleware/share-card.ts); the Worker hands every other page straight back. Build files and photos
+  // skip the Worker.
+  "assets": {
+    "run_worker_first": ["/*", "!/_nuxt/*", "!/_og/*", "!/_og-static-fonts/*", "!/_ipx/*", "!/places/*/*", "!/uses/*"]
+  },
   // Workers Builds runs `npx wrangler preview` on other branches, which refuses to run without this block.
   // Previews get their own cache namespace (created 2026-11-21) so they never write to the live site's cache,
   // and their own secrets, shared by every preview through the base config:

@@ -15,6 +15,10 @@ Commit and pull-request rules are in the maintainer's global agent rules, not he
 
 - Every page is prerendered (`routeRules` in `nuxt.config.ts`). The Worker serves only `/api/lastfm`,
   `/api/github`, `/api/bluesky`, `/api/stars` and `/contact.vcf`, and pages fetch those in the browser.
+- Page requests reach the Worker before the static files (`assets.run_worker_first` in `wrangler.jsonc`) only so
+  `?card=small` can swap in the small share card (`server/middleware/share-card.ts`). The middleware hands every
+  other request back to the static files. Test it with `pnpm build`, then
+  `npx wrangler dev --config .output/server/wrangler.json`.
 - `/api/site/**` and `/rss.xml` (`server/content-routes/`) exist only in dev and while prerendering. A new page
   that reads them must be prerendered and must call `assertLoaded` on the fetch's `error`.
 - Server code: import from `nuxt/server` (`nitro/h3` where a handler needs the `H3Event` type, as

@@ -12,6 +12,12 @@
       "runtimeExecutable": "npx",
       "runtimeArgs": ["wrangler", "dev", "--port", "8787"],
       "port": 8787
+    },
+    {
+      "name": "built-worker",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["wrangler", "dev", "--config", ".output/server/wrangler.json", "--port", "8788"],
+      "port": 8788
     }
   ]
 }
