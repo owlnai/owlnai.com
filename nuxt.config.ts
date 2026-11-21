@@ -16,6 +16,9 @@ const geistFaces = (['normal', 'italic'] as const).flatMap((style) =>
     style,
     unicodeRange,
     global: true,
+    // Nearly all text is upright Latin Geist, so that one file is fetched alongside the CSS instead of after
+    // the first layout. The longer the fallback font stays on screen, the more text reflows when Geist arrives.
+    preload: style === 'normal' && subset === 'latin',
   })),
 )
 
@@ -30,8 +33,8 @@ export default defineNuxtConfig({
       ...geistFaces,
       { name: 'Geist Mono Variable', provider: 'npm', weights: ['100 900'], styles: ['normal'], global: true },
       // The contact ticket on the About page
-      { name: 'Bebas Neue', provider: 'npm', weights: [400], styles: ['normal'], global: true },
-      { name: 'Space Mono', provider: 'npm', weights: [400, 700], styles: ['normal'], global: true },
+      { name: 'Bebas Neue', provider: 'npm', weights: [400], styles: ['normal'] },
+      { name: 'Space Mono', provider: 'npm', weights: [400, 700], styles: ['normal'] },
     ],
   },
   site: {

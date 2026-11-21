@@ -136,7 +136,8 @@ if (post.value.canonical) {
 }
 
 article :deep(.page-intro__title) {
-  max-width: 18ch;
+  /* 18ch in Geist, in em like the page title's own width: ch depends on which font has loaded */
+  max-width: 12.3em;
   font-size: clamp(2.25rem, 5.6vw, 3.75rem);
 }
 

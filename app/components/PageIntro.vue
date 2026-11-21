@@ -18,7 +18,9 @@ defineProps<{ title?: string }>()
 }
 
 .page-intro__title {
-  max-width: 14ch;
+  /* 14ch in Geist, written in em: a ch is the width of the font's "0", which is narrower in the fallback
+     shown until Geist loads, so the title wrapped differently and the page jumped when the font arrived */
+  max-width: 9.56em;
   font-size: clamp(2.5rem, 7vw, 4.75rem);
   letter-spacing: -0.055em;
   text-wrap: balance;
