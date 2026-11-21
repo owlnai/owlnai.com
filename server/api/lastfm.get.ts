@@ -28,10 +28,11 @@ const cover = (images: Image[] | undefined, size: Image['size']) => {
 }
 
 // The latest scrobble, polled by the header island and the home page every 30 seconds while a tab is open.
-// Cached in Workers KV so Last.fm sees at most a couple of requests a minute, however many people are reading.
-// If Last.fm fails, the last track is served for up to an hour; an older "now playing" would be misleading.
+// Cached in Workers KV for 30 seconds, then served stale for at most another minute while it refreshes, so
+// Last.fm sees at most a couple of requests a minute and nobody is shown a "now playing" from hours ago.
+// If Last.fm fails, the last track is served for up to an hour.
 const getRecentTrack = defineCachedFunction(
-  async (user: string, apiKey: string) => {
+  async (_event: H3Event, user: string, apiKey: string) => {
     const url = new URL('https://ws.audioscrobbler.com/2.0/')
     url.search = new URLSearchParams({
       method: 'user.getrecenttracks',
@@ -60,7 +61,14 @@ const getRecentTrack = defineCachedFunction(
     }
   },
   // Keyed by user only, so the API key never ends up in a cache key
-  { maxAge: 30, swr: true, staleIfError: 60 * 60, name: 'lastfm-recent', getKey: (user: string) => user },
+  {
+    maxAge: 30,
+    staleMaxAge: 60,
+    swr: true,
+    staleIfError: 60 * 60,
+    name: 'lastfm-recent',
+    getKey: (_event: H3Event, user: string) => user,
+  },
 )
 
 // Last.fm makes each cover size the first time anyone asks for it, which took 9 seconds in testing; after that
@@ -86,7 +94,7 @@ export default defineEventHandler(async (event) => {
   const { apiKey, user } = useRuntimeConfig().lastfm
   if (!apiKey || !user) return { track: null }
   try {
-    const result = await getRecentTrack(user, apiKey)
+    const result = await getRecentTrack(event, user, apiKey)
     const cover = result.track?.cover
     if (cover) warmCovers(event, [cover.small, cover.large])
     return result
