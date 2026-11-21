@@ -36,9 +36,11 @@
     "@nuxtjs/seo": "^6.0.1",
     "@takumi-rs/core": "^2.20.0",
     "nuxt": "npm:nuxt-nightly@5.0.0-2611192005-90d717d",
+    "shiki": "4.6.0",
     "typescript": "5.9.3",
     "vue-tsc": "^3.3.14",
-    "wrangler": "^4.166.0"
+    "wrangler": "^4.166.0",
+    "yaml": "2.9.1"
   },
   "packageManager": "pnpm@12.18.0"
 }

@@ -235,6 +235,9 @@ importers:
       nuxt:
         specifier: npm:nuxt-nightly@5.0.0-2611192005-90d717d
         version: nuxt-nightly@5.0.0-2611192005-90d717d(a61125b678032aedffb5496b61b750a3)
+      shiki:
+        specifier: 4.6.0
+        version: 4.6.0
       typescript:
         specifier: 5.9.3
         version: 5.9.3
@@ -244,6 +247,9 @@ importers:
       wrangler:
         specifier: ^4.166.0
         version: 4.166.0(@types/node@24.19.2)
+      yaml:
+        specifier: 2.9.1
+        version: 2.9.1
 
 packages:
 
@@ -7836,20 +7842,17 @@ snapshots:
       '@shikijs/vscode-textmate': 10.1.0
       '@types/hast': 3.0.5
       hast-util-to-html: 9.0.7
-    optional: true
 
   '@shikijs/engine-javascript@4.6.0':
     dependencies:
       '@shikijs/types': 4.6.0
       '@shikijs/vscode-textmate': 10.1.0
       oniguruma-to-es: 4.3.6
-    optional: true
 
   '@shikijs/engine-oniguruma@4.6.0':
     dependencies:
       '@shikijs/types': 4.6.0
       '@shikijs/vscode-textmate': 10.1.0
-    optional: true
 
   '@shikijs/langs@4.6.0':
     dependencies:
@@ -7860,7 +7863,6 @@ snapshots:
       '@shikijs/types': 4.6.0
       '@shikijs/vscode-textmate': 10.1.0
       '@types/hast': 3.0.5
-    optional: true
 
   '@shikijs/themes@4.6.0':
     dependencies:
@@ -8096,7 +8098,6 @@ snapshots:
   '@types/mdast@4.0.4':
     dependencies:
       '@types/unist': 3.0.3
-    optional: true
 
   '@types/node-fetch@2.6.13':
     dependencies:
@@ -8135,8 +8136,7 @@ snapshots:
       '@nuxt/schema': '@nuxt/schema-nightly@5.0.0-2611192005-90d717d'
       nuxt: nuxt-nightly@5.0.0-2611192005-90d717d(a61125b678032aedffb5496b61b750a3)
 
-  '@ungap/structured-clone@1.4.0':
-    optional: true
+  '@ungap/structured-clone@1.4.0': {}
 
   '@unhead/bundler@3.4.3(@oxc-project/types@0.156.0)(esbuild@0.28.2)(lightningcss@1.33.0)(oxc-parser@0.153.0)(rolldown@1.2.19)(rollup@4.68.7)(unhead@3.4.3(esbuild@0.28.2)(rolldown@1.2.19)(rollup@4.68.7)(vite@8.3.8(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1)))(vite@8.3.8(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))':
     dependencies:
@@ -8815,13 +8815,11 @@ snapshots:
   caniuse-lite@1.0.30001826:
     optional: true
 
-  ccount@2.0.1:
-    optional: true
+  ccount@2.0.1: {}
 
   chalk@5.3.0: {}
 
-  character-entities-html4@2.1.0:
-    optional: true
+  character-entities-html4@2.1.0: {}
 
   character-entities-legacy@3.0.0: {}
 
@@ -9309,8 +9307,7 @@ snapshots:
     dependencies:
       delayed-stream: 1.0.0
 
-  comma-separated-tokens@2.0.3:
-    optional: true
+  comma-separated-tokens@2.0.3: {}
 
   commander@2.20.3: {}
 
@@ -9534,8 +9531,7 @@ snapshots:
   depd@2.0.0:
     optional: true
 
-  dequal@2.0.3:
-    optional: true
+  dequal@2.0.3: {}
 
   destr@2.0.5: {}
 
@@ -9558,7 +9554,6 @@ snapshots:
   devlop@1.1.0:
     dependencies:
       dequal: 2.0.3
-    optional: true
 
   devtools-protocol@0.0.1182435: {}
 
@@ -9967,19 +9962,16 @@ snapshots:
       space-separated-tokens: 2.0.2
       stringify-entities: 4.0.4
       zwitch: 2.0.4
-    optional: true
 
   hast-util-whitespace@3.0.0:
     dependencies:
       '@types/hast': 3.0.5
-    optional: true
 
   hookable@5.5.3: {}
 
   hookable@6.1.2: {}
 
-  html-void-elements@3.0.0:
-    optional: true
+  html-void-elements@3.0.0: {}
 
   http-errors@2.0.1:
     dependencies:
@@ -10354,7 +10346,6 @@ snapshots:
       unist-util-position: 5.0.0
       unist-util-visit: 5.2.0
       vfile: 6.0.3
-    optional: true
 
   mdn-data@2.27.1: {}
 
@@ -10388,23 +10379,18 @@ snapshots:
     dependencies:
       micromark-util-symbol: 2.0.1
       micromark-util-types: 2.0.3
-    optional: true
 
-  micromark-util-encode@2.0.1:
-    optional: true
+  micromark-util-encode@2.0.1: {}
 
   micromark-util-sanitize-uri@2.0.1:
     dependencies:
       micromark-util-character: 2.1.1
       micromark-util-encode: 2.0.1
       micromark-util-symbol: 2.0.1
-    optional: true
 
-  micromark-util-symbol@2.0.1:
-    optional: true
+  micromark-util-symbol@2.0.1: {}
 
-  micromark-util-types@2.0.3:
-    optional: true
+  micromark-util-types@2.0.3: {}
 
   micromatch@4.0.8:
     dependencies:
@@ -11122,15 +11108,13 @@ snapshots:
       mimic-fn: 4.0.0
     optional: true
 
-  oniguruma-parser@0.12.2:
-    optional: true
+  oniguruma-parser@0.12.2: {}
 
   oniguruma-to-es@4.3.6:
     dependencies:
       oniguruma-parser: 0.12.2
       regex: 6.1.0
       regex-recursion: 6.0.2
-    optional: true
 
   open@11.0.4:
     dependencies:
@@ -11251,8 +11235,7 @@ snapshots:
   process@0.11.10:
     optional: true
 
-  property-information@7.2.0:
-    optional: true
+  property-information@7.2.0: {}
 
   prosemirror-changeset@2.4.6:
     dependencies:
@@ -11385,15 +11368,12 @@ snapshots:
   regex-recursion@6.0.2:
     dependencies:
       regex-utilities: 2.3.0
-    optional: true
 
-  regex-utilities@2.3.0:
-    optional: true
+  regex-utilities@2.3.0: {}
 
   regex@6.1.0:
     dependencies:
       regex-utilities: 2.3.0
-    optional: true
 
   regexp-tree@0.1.27: {}
 
@@ -11608,7 +11588,6 @@ snapshots:
       '@shikijs/types': 4.6.0
       '@shikijs/vscode-textmate': 10.1.0
       '@types/hast': 3.0.5
-    optional: true
 
   signal-exit@4.1.0:
     optional: true
@@ -11658,8 +11637,7 @@ snapshots:
   source-map@0.8.0:
     optional: true
 
-  space-separated-tokens@2.0.2:
-    optional: true
+  space-separated-tokens@2.0.2: {}
 
   srvx@1.0.8: {}
 
@@ -11708,7 +11686,6 @@ snapshots:
     dependencies:
       character-entities-html4: 2.1.0
       character-entities-legacy: 3.0.0
-    optional: true
 
   strip-ansi@7.2.0:
     dependencies:
@@ -11813,8 +11790,7 @@ snapshots:
 
   tr46@0.0.3: {}
 
-  trim-lines@3.0.1:
-    optional: true
+  trim-lines@3.0.1: {}
 
   tslib@2.8.1: {}
 
@@ -11962,30 +11938,25 @@ snapshots:
   unist-util-is@6.0.1:
     dependencies:
       '@types/unist': 3.0.3
-    optional: true
 
   unist-util-position@5.0.0:
     dependencies:
       '@types/unist': 3.0.3
-    optional: true
 
   unist-util-stringify-position@4.0.0:
     dependencies:
       '@types/unist': 3.0.3
-    optional: true
 
   unist-util-visit-parents@6.1.0:
     dependencies:
       '@types/unist': 3.0.3
       unist-util-is: 6.0.1
-    optional: true
 
   unist-util-visit@5.2.0:
     dependencies:
       '@types/unist': 3.0.3
       unist-util-is: 6.0.1
       unist-util-visit-parents: 6.1.0
-    optional: true
 
   unplugin-utils@0.3.2:
     dependencies:
@@ -12335,13 +12306,11 @@ snapshots:
     dependencies:
       '@types/unist': 3.0.3
       unist-util-stringify-position: 4.0.0
-    optional: true
 
   vfile@6.0.3:
     dependencies:
       '@types/unist': 3.0.3
       vfile-message: 4.0.4
-    optional: true
 
   vite-dev-rpc@2.0.0(vite@8.3.8(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1)):
     dependencies:
@@ -12671,5 +12640,4 @@ snapshots:
 
   zod@4.6.7: {}
 
-  zwitch@2.0.4:
-    optional: true
+  zwitch@2.0.4: {}
