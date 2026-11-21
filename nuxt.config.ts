@@ -91,9 +91,9 @@ export default defineNuxtConfig({
     // Content routes run in dev and while prerendering, never in the deployed Worker: every page that reads
     // them is prerendered, and leaving them out keeps Comark, Shiki and the Content runtime out of the bundle
     handlers: [
-      { route: '/api/site/:source', method: 'get', handler: '~~/server/content-routes/list.ts', env: ['dev', 'prerender'] },
-      { route: '/api/site/:source/**:slug', method: 'get', handler: '~~/server/content-routes/entry.ts', env: ['dev', 'prerender'] },
-      { route: '/rss.xml', method: 'get', handler: '~~/server/content-routes/rss.ts', env: ['dev', 'prerender'] },
+      { route: '/api/site/:source', method: 'GET', handler: '~~/server/content-routes/list.ts', env: ['dev', 'prerender'] },
+      { route: '/api/site/:source/**:slug', method: 'GET', handler: '~~/server/content-routes/entry.ts', env: ['dev', 'prerender'] },
+      { route: '/rss.xml', method: 'GET', handler: '~~/server/content-routes/rss.ts', env: ['dev', 'prerender'] },
     ],
     // about.html rather than about/index.html, so Workers serves /about without redirecting to /about/
     prerender: { crawlLinks: true, autoSubfolderIndex: false, routes: ['/rss.xml'] },
