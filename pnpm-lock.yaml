@@ -232,6 +232,9 @@ importers:
       '@takumi-rs/core':
         specifier: ^2.20.0
         version: 2.20.0(csstype@3.2.4)
+      image-meta:
+        specifier: 0.3.1
+        version: 0.3.1
       nuxt:
         specifier: npm:nuxt-nightly@5.0.0-2611192005-90d717d
         version: nuxt-nightly@5.0.0-2611192005-90d717d(a61125b678032aedffb5496b61b750a3)

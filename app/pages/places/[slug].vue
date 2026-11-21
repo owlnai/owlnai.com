@@ -44,7 +44,14 @@ defineOgImage(
     </PageIntro>
 
     <figure v-if="place.cover" class="cover">
-      <img :src="place.cover" :alt="place.coverAlt ?? `${place.title}, cover photo`" />
+      <NuxtImg
+        :src="place.cover"
+        :alt="place.coverAlt ?? `${place.title}, cover photo`"
+        :width="place.coverSize?.width"
+        :height="place.coverSize?.height"
+        sizes="sm:100vw md:100vw lg:100vw xl:1280px"
+        fetchpriority="high"
+      />
     </figure>
 
     <div class="body">
@@ -89,6 +96,8 @@ defineOgImage(
 
 .cover img {
   width: 100%;
+  /* The height attribute is there for the aspect ratio, not as a fixed height */
+  height: auto;
   max-height: 80svh;
   object-fit: cover;
 }

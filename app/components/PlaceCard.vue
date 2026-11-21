@@ -12,7 +12,7 @@ const flag = computed(() => (props.place.country ? flags[props.place.country] : 
 <template>
   <NuxtLink :to="place.path" class="place" :data-active="active ? '' : undefined">
     <span class="place__cover" :data-empty="place.cover ? undefined : ''">
-      <img v-if="place.cover" :src="place.cover" alt="" loading="lazy" />
+      <NuxtImg v-if="place.cover" :src="place.cover" alt="" loading="lazy" width="400" densities="1x 2x" />
     </span>
     <span class="place__text">
       <span class="place__title display">

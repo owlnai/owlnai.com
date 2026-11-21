@@ -65,7 +65,13 @@ export interface ContentBody {
 }
 
 export type Entry<S extends SourceName> = z.output<(typeof schemas)[S]> & { path: string }
-export type EntryWithBody<S extends SourceName> = Entry<S> & { body: ContentBody }
+export interface ImageSize {
+  width?: number
+  height?: number
+}
+
+// `coverSize` is the intrinsic size of a place's cover photo, read from the file while prerendering
+export type EntryWithBody<S extends SourceName> = Entry<S> & { body: ContentBody; coverSize?: ImageSize }
 
 export type Note = EntryWithBody<'notes'>
 export type Place = Entry<'places'>

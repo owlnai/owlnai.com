@@ -1,4 +1,6 @@
 import { type ContentBody, type ContentNode, type Entry, type EntryWithBody, schemas, type SourceName, type TocLink } from '#shared/content'
+import { readFile } from 'node:fs/promises'
+import { imageMeta } from 'image-meta'
 import content from '../content'
 
 interface Document {
@@ -14,8 +16,27 @@ function toEntry<S extends SourceName>(source: S, doc: Document): Entry<S> {
   return { ...(parsed.data as Entry<S>), path: doc.path }
 }
 
-function toBody(doc: Document): ContentBody {
-  return { nodes: doc.nodes ?? [], toc: doc.meta.toc?.links ?? [] }
+// The intrinsic size of a photo in public/, so the page can keep its space before it loads. This file runs
+// only in dev and while prerendering (Node, from the project root), never in the Worker.
+async function sizeOf(src: string) {
+  const { width, height } = imageMeta(await readFile(`public${src}`))
+  return { width, height }
+}
+
+async function withImageSizes(nodes: ContentNode[]): Promise<ContentNode[]> {
+  return Promise.all(
+    nodes.map(async (node): Promise<ContentNode> => {
+      if (typeof node === 'string') return node
+      const [tag, attrs, ...children] = node
+      const src = attrs.src
+      const sized = tag === 'img' && typeof src === 'string' && src.startsWith('/') ? { ...attrs, ...(await sizeOf(src)) } : attrs
+      return [tag, sized, ...(await withImageSizes(children))]
+    }),
+  )
+}
+
+async function toBody(doc: Document): Promise<ContentBody> {
+  return { nodes: await withImageSizes(doc.nodes ?? []), toc: doc.meta.toc?.links ?? [] }
 }
 
 // Newest first for dated folders; pages and notes keep their file order
@@ -41,7 +62,7 @@ export async function listEntries<S extends SourceName>(source: S, { withBody = 
     entries.map(async (entry) => {
       const doc = (await content.get(entry.path)) as Document | null
       if (!doc) throw new Error(`Missing body for ${entry.path}`)
-      return Object.assign({}, entry, { body: toBody(doc) })
+      return Object.assign({}, entry, { body: await toBody(doc) })
     }),
   )
 }
@@ -50,5 +71,8 @@ export async function listEntries<S extends SourceName>(source: S, { withBody = 
 export async function getEntry<S extends SourceName>(source: S, path: string): Promise<EntryWithBody<S> | null> {
   const doc = (await content.get(path)) as Document | null
   if (!doc || doc.meta.source !== source) return null
-  return Object.assign(toEntry(source, doc), { body: toBody(doc) })
+  const entry = toEntry(source, doc)
+  const cover = 'cover' in entry ? entry.cover : undefined
+  const coverSize = cover?.startsWith('/') ? await sizeOf(cover) : undefined
+  return Object.assign(entry, { body: await toBody(doc), coverSize })
 }

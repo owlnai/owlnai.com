@@ -37,6 +37,10 @@ export default defineNuxtConfig({
       { name: 'Space Mono', provider: 'npm', weights: [400, 700], styles: ['normal'] },
     ],
   },
+  // Resized copies of the photos in public/ are written while the pages prerender (ipxStatic), so the Worker
+  // serves them as static files. Options stay at one per image (a width or a size): several would put `&` in
+  // the URL, which Workers static assets answer with a redirect.
+  image: { provider: 'ipxStatic' },
   site: {
     url: 'https://owlnai.com',
     name: 'Unai Mengual',
@@ -68,6 +72,8 @@ export default defineNuxtConfig({
   // and its store of old assets lives in node_modules/.cache, which Workers Builds does not keep
   skewProtection: false,
   $development: {
+    // The dev server has no /_ipx route under Nitro 3, so in dev the photos load as their original files
+    image: { provider: 'none' },
     nitro: {
       // Nitro 3's dev server runs server code as ES modules and cannot load the CommonJS build of `yaml`,
       // which ViteHub Content and AI Ready import. Its ES module build has the same API.
