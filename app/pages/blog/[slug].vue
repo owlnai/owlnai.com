@@ -11,12 +11,13 @@ if (!post.value) {
 }
 
 // The list is newest first, so the post before this one is the newer post
-const { data: neighbours } = await useAsyncData(`blog-${route.params.slug}-neighbours`, async () => {
+const { data: neighbours, error: neighboursError } = await useAsyncData(`blog-${route.params.slug}-neighbours`, async () => {
   const posts = await $fetch<Entry<'blog'>[]>('/api/site/blog')
   const index = posts.findIndex((item) => item.path === route.path)
   const pick = (item?: (typeof posts)[number]) => (item ? { title: item.title, path: item.path } : null)
   return { newer: pick(posts[index - 1]), older: pick(posts[index + 1]) }
 })
+assertLoaded(neighboursError, 'blog posts')
 const newer = computed(() => neighbours.value?.newer ?? null)
 const older = computed(() => neighbours.value?.older ?? null)
 

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { Entry } from '#shared/content'
 
-const { data: posts } = await useAsyncData('blog-index', () => $fetch<Entry<'blog'>[]>('/api/site/blog'))
+const { data: posts, error } = await useAsyncData('blog-index', () => $fetch<Entry<'blog'>[]>('/api/site/blog'))
+assertLoaded(error, 'blog posts')
 
 useSeoMeta({
   title: 'Blog',

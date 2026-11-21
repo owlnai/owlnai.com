@@ -2,18 +2,22 @@
 import type { Entry, EntryWithBody } from '#shared/content'
 import { brands, openSource, person, socials } from '~/data/site'
 
-const { data: headline } = await useAsyncData('headline', () =>
+const { data: headline, error: headlineError } = await useAsyncData('headline', () =>
   $fetch<EntryWithBody<'pages'>>('/api/site/pages/headline'),
 )
-const { data: posts } = await useAsyncData('home-posts', async () =>
+assertLoaded(headlineError, 'the headline')
+const { data: posts, error: postsError } = await useAsyncData('home-posts', async () =>
   (await $fetch<Entry<'blog'>[]>('/api/site/blog')).slice(0, 3),
 )
-const { data: notes } = await useAsyncData('home-notes', async () =>
+assertLoaded(postsError, 'blog posts')
+const { data: notes, error: notesError } = await useAsyncData('home-notes', async () =>
   (await $fetch<EntryWithBody<'notes'>[]>('/api/site/notes', { query: { body: '1' } })).slice(0, 4),
 )
-const { data: places } = await useAsyncData('home-places', async () =>
+assertLoaded(notesError, 'notes')
+const { data: places, error: placesError } = await useAsyncData('home-places', async () =>
   (await $fetch<Entry<'places'>[]>('/api/site/places')).slice(0, 3),
 )
+assertLoaded(placesError, 'places')
 
 // Fetched in the browser so the prerendered page still shows current counts
 const { data: stars } = useLazyFetch('/api/stars', {

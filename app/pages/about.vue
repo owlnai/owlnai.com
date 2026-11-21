@@ -3,7 +3,8 @@ import type { Entry, EntryWithBody } from '#shared/content'
 import { flags } from '~/data/flags'
 import { community, milestones, names } from '~/data/site'
 
-const { data: page } = await useAsyncData('about', () => $fetch<EntryWithBody<'pages'>>('/api/site/pages/about'))
+const { data: page, error: pageError } = await useAsyncData('about', () => $fetch<EntryWithBody<'pages'>>('/api/site/pages/about'))
+assertLoaded(pageError, 'the about page')
 
 useSeoMeta({
   title: 'About',
@@ -26,9 +27,10 @@ const tilts = { contributions: -2.5, design: 2, here: -1.5 }
 
 // Every trip becomes a stamp on the step for its year (or the latest step before it)
 // Oldest first, so each step's stamps read in the order of the trips
-const { data: places } = await useAsyncData('journey-places', async () =>
+const { data: places, error: placesError } = await useAsyncData('journey-places', async () =>
   (await $fetch<Entry<'places'>[]>('/api/site/places')).map(({ title, path, date, country }) => ({ title, path, date, country })).reverse(),
 )
+assertLoaded(placesError, 'places')
 
 const stampsAt = computed(() => {
   const byStep: Record<number, NonNullable<typeof places.value>> = {}

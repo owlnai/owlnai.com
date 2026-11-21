@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { EntryWithBody } from '#shared/content'
 
-const { data: notes } = await useAsyncData('notes', () =>
+const { data: notes, error } = await useAsyncData('notes', () =>
   $fetch<EntryWithBody<'notes'>[]>('/api/site/notes', { query: { body: '1' } }),
 )
+assertLoaded(error, 'notes')
 
 useSeoMeta({
   title: 'Notes',
