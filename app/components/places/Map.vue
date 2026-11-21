@@ -116,10 +116,28 @@ const arcs = computed(() =>
 
 // The holo gradient runs across the frame, so arcs pick up different colours depending on where they go
 const gradient = useId()
+
+// The lights running along the arcs redraw the map on every frame, so they only run while it is on screen
+const root = ref<HTMLElement>()
+const onScreen = ref(true)
+let observer: IntersectionObserver | undefined
+
+onMounted(() => {
+  observer = new IntersectionObserver(([entry]) => (onScreen.value = entry?.isIntersecting ?? true))
+  if (root.value) observer.observe(root.value)
+})
+
+onBeforeUnmount(() => observer?.disconnect())
 </script>
 
 <template>
-  <div class="map" :data-active="active ? '' : undefined" :style="{ aspectRatio: `${aspect}` }">
+  <div
+    ref="root"
+    class="map"
+    :data-active="active ? '' : undefined"
+    :data-paused="onScreen ? undefined : ''"
+    :style="{ aspectRatio: `${aspect}` }"
+  >
     <svg :viewBox="`${view.x} ${view.y} ${view.w} ${view.h}`" class="map__svg" aria-hidden="true">
       <defs>
         <linearGradient
@@ -304,44 +322,66 @@ const gradient = useId()
   border-radius: 50%;
 }
 
-/* A small holographic disc whose colours turn, with a white glint like the ticket's foil */
+/* A small holographic disc whose colours turn, with a white glint like the ticket's foil. The colours are a
+   layer of their own that rotates, which the browser can do without repainting; turning the gradient's start
+   angle instead repainted the disc on every frame. The glint sits still on top. */
 .map__dot {
+  position: relative;
   width: 0.625rem;
   height: 0.625rem;
   border-radius: 50%;
-  background:
-    radial-gradient(circle at 35% 30%, rgb(255 255 255 / 0.85), transparent 45%),
-    conic-gradient(from var(--turn, 0deg), var(--holo-1), var(--holo-2), var(--holo-3), var(--holo-4), var(--holo-5), var(--holo-1));
   box-shadow:
     0 0 0 2px var(--paper),
     0 0 0 2.5px var(--line-strong);
-  animation: turn 4s linear infinite;
   transition: scale 0.3s var(--ease-out);
+}
+
+.map__dot::before,
+.map__dot::after {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  content: '';
+}
+
+.map__dot::before {
+  background: conic-gradient(var(--holo-1), var(--holo-2), var(--holo-3), var(--holo-4), var(--holo-5), var(--holo-1));
+  animation: turn 4s linear infinite;
+}
+
+.map__dot::after {
+  background: radial-gradient(circle at 35% 30%, rgb(255 255 255 / 0.85), transparent 45%);
 }
 
 .map__pin[data-on] .map__dot {
   scale: 1.4;
 }
 
-.map__dot::after {
+/* A ring the size of the disc that swells and fades. Invisible when it is not animating. */
+.map__pin::after {
   position: absolute;
   inset: 0.4375rem;
   border-radius: 50%;
   background: conic-gradient(var(--holo-1), var(--holo-2), var(--holo-3), var(--holo-4), var(--holo-5), var(--holo-1));
   content: '';
+  opacity: 0;
   animation: pulse 2.4s var(--ease-out) infinite;
   pointer-events: none;
 }
 
-@property --turn {
-  syntax: '<angle>';
-  inherits: false;
-  initial-value: 0deg;
+.map__pin[data-on]::after {
+  inset: 0.3125rem;
+}
+
+.map[data-paused] .map__glint,
+.map[data-paused] .map__dot::before,
+.map[data-paused] .map__pin::after {
+  animation-play-state: paused;
 }
 
 @keyframes turn {
   to {
-    --turn: 360deg;
+    rotate: 1turn;
   }
 }
 
@@ -360,6 +400,8 @@ const gradient = useId()
   position: absolute;
   bottom: calc(100% + 0.15rem);
   left: 50%;
+  /* Above the pin's swelling ring */
+  z-index: 1;
   display: flex;
   gap: 0.4rem;
   align-items: baseline;
@@ -403,8 +445,8 @@ const gradient = useId()
     display: none;
   }
 
-  .map__dot,
-  .map__dot::after {
+  .map__dot::before,
+  .map__pin::after {
     animation: none;
   }
 }
