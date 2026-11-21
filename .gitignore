@@ -27,3 +27,9 @@ logs
 .env
 .env.*
 !.env.example
+
+# Local secrets for `wrangler dev`
+.dev.vars*
+
+# Obsidian's own state; content/ is edited as a vault
+content/.obsidian/
