@@ -126,6 +126,11 @@ export default defineNuxtConfig({
   app: {
     head: {
       htmlAttrs: { lang: 'en' },
+      // A round crop of icon.png for tabs (16, 32 and 48 px inside the .ico), a square one for iOS home screens
+      link: [
+        { rel: 'icon', href: '/favicon.ico', sizes: '16x16 32x32 48x48' },
+        { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
+      ],
     },
     pageTransition: { name: 'page', mode: 'out-in' },
   },
