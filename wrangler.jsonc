@@ -13,5 +13,16 @@
   "vars": {
     "NUXT_LASTFM_USER": "owlnai"
   },
-  "observability": { "enabled": true }
+  "observability": { "enabled": true },
+  // Workers Builds runs `npx wrangler preview` on other branches, which refuses to run without this block.
+  // Previews get their own cache namespace (created 2026-11-21) so they never write to the live site's cache,
+  // and their own secrets, shared by every preview through the base config:
+  // `npx wrangler preview base-config secret put NUXT_LASTFM_API_KEY`. Without that key the music widget
+  // shows nothing in previews.
+  "previews": {
+    "vars": {
+      "NUXT_LASTFM_USER": "owlnai"
+    },
+    "kv_namespaces": [{ "binding": "CACHE", "id": "5b7016a2f5be491d8390a01f2e1e43bd" }]
+  }
 }
