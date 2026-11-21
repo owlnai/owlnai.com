@@ -651,7 +651,7 @@ a.entry:hover .entry__arrow {
       animation-range: entry 0% cover 15%;
     }
 
-    .journey__step :focus-within,
+    .journey__step:focus-within :is(.journey__chapter, .journey__text, .journey__extra),
     .journey__next:focus {
       animation: none;
     }
