@@ -1,15 +1,26 @@
 <script setup lang="ts">
+import type { Entry, EntryWithBody } from '#shared/content'
 import { brands, openSource, person, socials } from '~/data/site'
 
-const { data: headline } = await useAsyncData('headline', () => $fetch('/api/site/pages/headline'))
-const { data: posts } = await useAsyncData('home-posts', async () => (await $fetch('/api/site/blog')).slice(0, 3))
-const { data: notes } = await useAsyncData('home-notes', async () =>
-  (await $fetch('/api/site/notes', { query: { body: '1' } })).slice(0, 4),
+const { data: headline } = await useAsyncData('headline', () =>
+  $fetch<EntryWithBody<'pages'>>('/api/site/pages/headline'),
 )
-const { data: places } = await useAsyncData('home-places', async () => (await $fetch('/api/site/places')).slice(0, 3))
+const { data: posts } = await useAsyncData('home-posts', async () =>
+  (await $fetch<Entry<'blog'>[]>('/api/site/blog')).slice(0, 3),
+)
+const { data: notes } = await useAsyncData('home-notes', async () =>
+  (await $fetch<EntryWithBody<'notes'>[]>('/api/site/notes', { query: { body: '1' } })).slice(0, 4),
+)
+const { data: places } = await useAsyncData('home-places', async () =>
+  (await $fetch<Entry<'places'>[]>('/api/site/places')).slice(0, 3),
+)
 
 // Fetched in the browser so the prerendered page still shows current counts
-const { data: stars } = useLazyFetch('/api/stars', { server: false, cache: 'no-cache', default: () => ({}) })
+const { data: stars } = useLazyFetch('/api/stars', {
+  server: false,
+  cache: 'no-cache',
+  default: (): Record<string, number> => ({}),
+})
 const starCount = new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 })
 
 useSeoMeta({

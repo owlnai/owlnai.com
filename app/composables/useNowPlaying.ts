@@ -1,5 +1,8 @@
+import type { Response as ApiResponse } from '#build/server-routes'
+
+// `$fetch` is not typed by route on this Nuxt version (only `useFetch` is), so the response type is named here
 const fetchLatest = () =>
-  $fetch('/api/lastfm', { cache: 'no-cache' })
+  $fetch<ApiResponse<'/api/lastfm'>>('/api/lastfm', { cache: 'no-cache' })
     .then((response) => response.track)
     .catch(() => undefined)
 

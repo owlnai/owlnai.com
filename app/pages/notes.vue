@@ -1,5 +1,9 @@
 <script setup lang="ts">
-const { data: notes } = await useAsyncData('notes', () => $fetch('/api/site/notes', { query: { body: '1' } }))
+import type { EntryWithBody } from '#shared/content'
+
+const { data: notes } = await useAsyncData('notes', () =>
+  $fetch<EntryWithBody<'notes'>[]>('/api/site/notes', { query: { body: '1' } }),
+)
 
 useSeoMeta({
   title: 'Notes',

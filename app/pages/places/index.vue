@@ -1,5 +1,7 @@
 <script setup lang="ts">
-const { data: places } = await useAsyncData('places-index', () => $fetch('/api/site/places'))
+import type { Entry } from '#shared/content'
+
+const { data: places } = await useAsyncData('places-index', () => $fetch<Entry<'places'>[]>('/api/site/places'))
 
 useSeoMeta({
   title: 'Places',

@@ -1,5 +1,7 @@
 <script setup lang="ts">
-const { data: posts } = await useAsyncData('blog-index', () => $fetch('/api/site/blog'))
+import type { Entry } from '#shared/content'
+
+const { data: posts } = await useAsyncData('blog-index', () => $fetch<Entry<'blog'>[]>('/api/site/blog'))
 
 useSeoMeta({
   title: 'Blog',

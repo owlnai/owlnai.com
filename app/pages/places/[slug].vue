@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import type { EntryWithBody } from '#shared/content'
 import { flags } from '~/data/flags'
 
-const route = useRoute()
+const route = useRoute('places-slug')
 const { data: place } = await useAsyncData(`place-${route.params.slug}`, () =>
-  $fetch(`/api/site/places/${route.params.slug}`).catch(() => null),
+  $fetch<EntryWithBody<'places'>>(`/api/site/places/${route.params.slug}`).catch(() => null),
 )
 
 if (!place.value) {

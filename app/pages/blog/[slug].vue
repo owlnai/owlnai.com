@@ -1,7 +1,9 @@
 <script setup lang="ts">
-const route = useRoute()
+import type { Entry, EntryWithBody } from '#shared/content'
+
+const route = useRoute('blog-slug')
 const { data: post } = await useAsyncData(`blog-${route.params.slug}`, () =>
-  $fetch(`/api/site/blog/${route.params.slug}`).catch(() => null),
+  $fetch<EntryWithBody<'blog'>>(`/api/site/blog/${route.params.slug}`).catch(() => null),
 )
 
 if (!post.value) {
@@ -10,7 +12,7 @@ if (!post.value) {
 
 // The list is newest first, so the post before this one is the newer post
 const { data: neighbours } = await useAsyncData(`blog-${route.params.slug}-neighbours`, async () => {
-  const posts = await $fetch('/api/site/blog')
+  const posts = await $fetch<Entry<'blog'>[]>('/api/site/blog')
   const index = posts.findIndex((item) => item.path === route.path)
   const pick = (item?: (typeof posts)[number]) => (item ? { title: item.title, path: item.path } : null)
   return { newer: pick(posts[index - 1]), older: pick(posts[index + 1]) }
