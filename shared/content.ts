@@ -67,6 +67,5 @@ export interface ContentBody {
 export type Entry<S extends SourceName> = z.output<(typeof schemas)[S]> & { path: string }
 export type EntryWithBody<S extends SourceName> = Entry<S> & { body: ContentBody }
 
-export type BlogPost = Entry<'blog'>
 export type Note = EntryWithBody<'notes'>
 export type Place = Entry<'places'>

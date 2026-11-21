@@ -49,6 +49,7 @@ export default defineContent({
       toc({ depth: 3, searchDepth: 3 }),
     ],
   },
-  // The pages read Content through server/api/site/, so the generic /api/content/** reader stays off
+  // The pages read Content through server/content-routes/ (mounted at /api/site/), so the generic
+  // /api/content/** reader stays off
   route: false,
 })

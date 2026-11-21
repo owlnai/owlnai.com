@@ -195,12 +195,6 @@ button {
   translate: 50% 50%;
 }
 
-.cross[data-at='bl'] {
-  bottom: -0.5px;
-  left: -0.5px;
-  translate: -50% 50%;
-}
-
 /* Page shell: one column held between two rails */
 .site {
   position: relative;
