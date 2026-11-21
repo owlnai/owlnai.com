@@ -8,7 +8,7 @@ defineProps<{ glow?: boolean }>()
     Holographic foil and glare for a card using useCardTilt. Drop it inside a positioned element; it reads
     --mx / --my / --active from there. Rest strength and lift on hover can be tuned with --foil-rest / --foil-lift.
   -->
-  <span class="foil" :class="{ 'foil--glow': glow }" aria-hidden="true" />
+  <span class="foil" :class="{ 'foil--glow': glow }" aria-hidden="true" v-bind="$attrs" />
   <span class="glare" aria-hidden="true" />
 </template>
 
