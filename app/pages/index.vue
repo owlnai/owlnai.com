@@ -152,8 +152,43 @@ defineOgImage('Site', {
 
 <style scoped>
 .hero {
+  /* Where the foil's rainbow band starts, how far apart its colours are, and how far the foil reaches */
+  --foil-band: 45%;
+  --foil-step: 7%;
+  --foil-reach: 62% 105%;
+  position: relative;
+  isolation: isolate;
   display: grid;
   min-height: min(36rem, calc(100svh - 3.5rem));
+}
+
+/* The contact ticket's foil, held still in the empty top-right corner: fine 55° lines in faint ink, lit by a
+   rainbow band, fading out before the text. The share card draws the same thing. It is a little stronger on light
+   paper, where the pale lines would otherwise vanish. */
+.hero::before {
+  content: '';
+  position: absolute;
+  /* Up behind the header (its 2.5rem pills and 0.75rem padding above and below), so the foil runs from the top of
+     the page instead of stopping in a straight line under the header */
+  inset: -4rem 0 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      25deg,
+      transparent var(--foil-band),
+      color-mix(in oklab, var(--holo-1) 65%, transparent) calc(var(--foil-band) + 9%),
+      color-mix(in oklab, var(--holo-2) 65%, transparent) calc(var(--foil-band) + 9% + var(--foil-step)),
+      color-mix(in oklab, var(--holo-3) 65%, transparent) calc(var(--foil-band) + 9% + 2 * var(--foil-step)),
+      color-mix(in oklab, var(--holo-4) 65%, transparent) calc(var(--foil-band) + 9% + 3 * var(--foil-step)),
+      color-mix(in oklab, var(--holo-5) 65%, transparent) calc(var(--foil-band) + 9% + 4 * var(--foil-step)),
+      transparent calc(var(--foil-band) + 17% + 4 * var(--foil-step))
+    ),
+    color-mix(in oklab, var(--ink) 11%, transparent);
+  mask:
+    repeating-linear-gradient(55deg, #000 0 1px, transparent 1px 4px),
+    radial-gradient(var(--foil-reach) at 100% 0, light-dark(#000, rgb(0 0 0 / 0.7)), transparent);
+  mask-composite: intersect;
 }
 
 .hero__text {
@@ -427,7 +462,11 @@ defineOgImage('Site', {
 }
 
 @media (max-width: 52rem) {
+  /* The statement runs the full width here, so the foil keeps to a small corner above it */
   .hero {
+    --foil-band: 66%;
+    --foil-step: 5%;
+    --foil-reach: 75% 32%;
     min-height: 0;
   }
 
