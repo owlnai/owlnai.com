@@ -34,8 +34,6 @@ useSeoMeta({
 })
 defineOgImage('Site', {
   title: 'Unai Mengual',
-  description: 'Building for the web from Spain. Nuxt, Vue and open source.',
-  label: 'owlnai',
 })
 </script>
 

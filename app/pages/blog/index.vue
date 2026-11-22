@@ -8,7 +8,7 @@ useSeoMeta({
   title: 'Blog',
   description: 'Writing by Unai Mengual on CSS, Nuxt, Vue and the web.',
 })
-defineOgImage('Site', { title: 'Writing.', description: 'On CSS, Nuxt, Vue and the web.', label: 'Blog' })
+defineOgImage('Site', { title: 'Writing.' })
 
 useHead({
   link: [{ rel: 'alternate', type: 'application/rss+xml', title: 'Unai Mengual', href: '/rss.xml' }],

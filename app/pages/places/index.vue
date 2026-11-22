@@ -8,7 +8,7 @@ useSeoMeta({
   title: 'Places',
   description: 'Places Unai Mengual has visited, with photos and notes from each trip.',
 })
-defineOgImage('Site', { title: 'Places.', description: 'Photos and notes from each trip.', label: 'Places' })
+defineOgImage('Site', { title: 'Places.' })
 
 // The place being pointed at, from either its pin or its card, so both light up together
 const active = ref<string | null>(null)

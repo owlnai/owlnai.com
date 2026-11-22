@@ -55,8 +55,6 @@ useSeoMeta({
 })
 defineOgImage('Site', {
   title: post.value.title,
-  description: post.value.description,
-  label: 'Blog',
   date: longDate(post.value.date),
 })
 

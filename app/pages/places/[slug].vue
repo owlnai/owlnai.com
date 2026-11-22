@@ -23,8 +23,6 @@ defineOgImage(
   'Site',
   {
     title: place.value.title,
-    description: place.value.description,
-    label: 'Place',
     date: longDate(place.value.date),
     image: place.value.cover,
   },

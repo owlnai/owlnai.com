@@ -13,8 +13,6 @@ useSeoMeta({
 })
 defineOgImage('Site', {
   title: 'Hey! I’m Unai, from Spain.',
-  description: 'Full-stack developer at MRM, founder of the web design studio sector9 and of Songbird Labs.',
-  label: 'About',
 })
 
 // The journey's steps grouped under their chapter headings. Each keeps its index for its stamps and for "now".
