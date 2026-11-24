@@ -3,7 +3,7 @@ defineProps<{ id: string; title: string }>()
 </script>
 
 <template>
-  <section :id="id" class="section" :aria-labelledby="`${id}-title`">
+  <section :id="id" class="section rail" :aria-labelledby="`${id}-title`">
     <span class="cross" data-at="tl" />
     <span class="cross" data-at="tr" />
     <header class="section__head">

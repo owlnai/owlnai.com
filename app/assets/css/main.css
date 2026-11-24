@@ -195,6 +195,20 @@ button {
   translate: 50% 50%;
 }
 
+/* A strip of the hero foil's 55° lines across the top of a section, so where one section ends never looks like
+   the lines inside it. Goes on a grid, where it takes a whole row of its own. */
+.rail::before {
+  content: '';
+  grid-column: 1 / -1;
+  height: 1rem;
+  border-block-end: 1px solid var(--line);
+  background: repeating-linear-gradient(
+    55deg,
+    color-mix(in oklab, var(--ink) 14%, transparent) 0 1px,
+    transparent 1px 4px
+  );
+}
+
 /* Page shell: one column held between two rails */
 .site {
   position: relative;

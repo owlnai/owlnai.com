@@ -21,7 +21,7 @@ const showPost = computed(() => isLoading(bluesky.status.value) || post.value)
 </script>
 
 <template>
-  <section v-if="showRepo || showPost || track" class="lately" aria-label="Lately">
+  <section v-if="showRepo || showPost || track" class="lately rail" aria-label="Lately">
     <a v-if="track" :href="track.url" class="lately__cell lately__cell--music">
       <MusicCover :src="track.cover?.large" class="lately__cover" />
       <span class="lately__lead">
