@@ -52,7 +52,7 @@ const RULE = 486
       }"
     />
 
-    <!-- Fine 55° lines lit by a faint rainbow band, fading out from the top-right corner: the ticket's foil, drawn
+    <!-- Fine 55° lines lit by a faint violet-to-cyan band, fading out from the top-right corner: the ticket's foil, drawn
          as a 1200 × 600 transparent image -->
     <img v-if="!image" src="/og/foil.png" :style="{ position: 'absolute', inset: 0, width: '1200px', height: '600px' }" />
 

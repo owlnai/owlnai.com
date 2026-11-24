@@ -152,7 +152,7 @@ defineOgImage('Site', {
 
 <style scoped>
 .hero {
-  /* Where the foil's rainbow band starts, how far apart its colours are, and how far the foil reaches */
+  /* Where the foil's band starts, a quarter of its width, and how far the foil reaches */
   --foil-band: 45%;
   --foil-step: 7%;
   --foil-reach: 62% 105%;
@@ -163,8 +163,9 @@ defineOgImage('Site', {
 }
 
 /* The contact ticket's foil, held still in the empty top-right corner: fine 55° lines in faint ink, lit by a
-   rainbow band, fading out before the text. The share card draws the same thing. It is a little stronger on light
-   paper, where the pale lines would otherwise vanish. */
+   violet-to-cyan band, fading out before the text. Only two of the ticket's colours: all five in a row read as a
+   pride flag. The share card draws the same thing. It is a little stronger on light paper, where the pale lines
+   would otherwise vanish. */
 .hero::before {
   content: '';
   position: absolute;
@@ -177,11 +178,8 @@ defineOgImage('Site', {
     linear-gradient(
       25deg,
       transparent var(--foil-band),
-      color-mix(in oklab, var(--holo-1) 65%, transparent) calc(var(--foil-band) + 9%),
-      color-mix(in oklab, var(--holo-2) 65%, transparent) calc(var(--foil-band) + 9% + var(--foil-step)),
-      color-mix(in oklab, var(--holo-3) 65%, transparent) calc(var(--foil-band) + 9% + 2 * var(--foil-step)),
-      color-mix(in oklab, var(--holo-4) 65%, transparent) calc(var(--foil-band) + 9% + 3 * var(--foil-step)),
-      color-mix(in oklab, var(--holo-5) 65%, transparent) calc(var(--foil-band) + 9% + 4 * var(--foil-step)),
+      color-mix(in oklab, var(--holo-2) 60%, transparent) calc(var(--foil-band) + 9%),
+      color-mix(in oklab, var(--holo-3) 60%, transparent) calc(var(--foil-band) + 9% + 4 * var(--foil-step)),
       transparent calc(var(--foil-band) + 17% + 4 * var(--foil-step))
     ),
     color-mix(in oklab, var(--ink) 11%, transparent);
